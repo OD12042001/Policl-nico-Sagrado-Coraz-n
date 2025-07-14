@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Citas Totales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div th:fragment="contenido">
+        <div class="container mt-4">
+            <h2 class="mb-4">Citas Totales Programadas</h2>
+            <!-- Formulario de Filtro -->
+            <form method="get" th:action="@{/portalRecepcionista}">
+                <input type="hidden" name="contenido" value="recepcionista-dashboard/citastotales" />
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Especialidad</label>
+                        <select class="form-select" name="especialidad">
+                            <option value="">-- Todas --</option>
+                            <option th:each="esp : ${listaEspecialidades}" th:value="${esp}" th:text="${esp}"
+                                th:selected="${esp == especialidadSeleccionada}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" class="form-control" name="fecha" th:value="${fechaSeleccionada}" />
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+
+
+            <div th:if="${#lists.isEmpty(listaCitas)}" class="alert alert-info">
+                No hay citas programadas.
+            </div>
+
+            <div th:each="cita : ${listaCitas}" class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Cita #<span th:text="${cita.citaId}">1</span>
+                    </h5>
+                    <p class="card-text">
+                        <strong>Paciente</strong>
+                        <span th:text="${cita.pacienteNombre}">Piero Santiago Geldres</span><br />
+                        <strong>DNI</strong>
+                        <span th:text="${cita.dniPaciente}">75916526</span><br />
+                        <strong>Fecha:</strong>
+                        <span th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">14/07/2025</span><br />
+                        <strong>Hora:</strong> <span th:text="${cita.hora}">10:00 AM</span><br />
+                        <strong>Doctor:</strong>
+                        <span th:text="${cita.doctorNombre}">Dr. Pérez</span><br />
+                        <strong>Especialidad:</strong>
+                        <span th:text="${cita.especialidad}">Pediatría</span><br />
+                        <strong>Estado:</strong>
+                        <span th:text="${cita.estado}">PROGRAMADA</span>
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{'/recepcionista/cita/marcar/' + ${cita.citaId}}"
+                            class="btn btn-primary btn-sm">Marcar</a>
+                        <a th:href="@{'/recepcionista/cita/modificar/' + ${cita.citaId}}"
+                            class="btn btn-warning btn-sm">Modificar</a>
+                        <a th:href="@{'/recepcionista/cita/cancelar/' + ${cita.citaId}}" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Estás seguro de cancelar esta cita?');">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

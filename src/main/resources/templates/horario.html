@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <title>Document</title>
+    <style>
+        .divisor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .caja1 {
+            flex: 1 1 300px;
+            min-width: 300px;
+            max-width: 45%;
+        }
+
+        .caja2 {
+            flex: 1 1 400px;
+            min-width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+            <!-- Logo a la izquierda -->
+            <a class="navbar-brand" th:href="@{/index}">
+                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
+                Policlínico
+            </a>
+
+            <!-- Botón del navbar para móviles -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
+                <!-- Enlaces al centro -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/horario}">Horario</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contacto.html">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Si el usuario está logueado -->
+            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Si NO está logueado -->
+            <div class="d-flex" th:if="${session.usuarioActual == null}">
+                <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
+            </div>
+        </nav>
+    </header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+            <form class="d-flex w-100" th:action="@{/horario}" method="get">
+                <!-- Filtro por nombre -->
+                <input class="form-control me-2" type="search" name="nombre" placeholder="Buscar por nombre"
+                    th:value="${param.nombre}" aria-label="Buscar">
+
+                <!-- Filtro por especialidad -->
+                <select class="form-select me-2" name="especialidad">
+                    <option value="">Todas las especialidades</option>
+                    <option th:each="esp : ${especialidades}" th:value="${esp.nombre}" th:text="${esp.nombre}"
+                        th:selected="${param.especialidad == esp.nombre}">
+                    </option>
+                </select>
+
+                <button class="btn btn-outline-success" type="submit">Filtrar</button>
+            </form>
+        </div>
+    </nav>
+
+    <section class="container py-4">
+        <div th:if="${doctores != null}">
+            <div th:each="doc : ${doctores}" class="mb-5 border rounded p-3 shadow-sm divisor">
+                <div class="d-flex flex-wrap align-items-center caja1">
+                    <div class="me-3">
+                        <img th:src="@{|/img/${doc.imagen}|}" alt="Foto doctor" class="img-fluid rounded" width="150">
+                    </div>
+                    <div>
+                        <h3 th:text="${doc.especialidad}"></h3>
+                        <h2 th:text="${doc.nombre}"></h2>
+                        <p class="text-muted">CMP <span th:text="${doc.cmp}"></span></p>
+                        <a href="#" class="btn btn-link p-0">Ver perfil</a>
+                    </div>
+                </div>
+
+                <div class="mt-4 caja2">
+                    <div th:each="entry : ${doc.horariosPorFecha}">
+                        <h5>📅 <span th:text="${entry.key}"></span></h5>
+                        <div class="row g-2">
+                            <div class="col-4 col-md-2" th:each="hor : ${entry.value}">
+                                <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                                    data-bs-target="#detalleModal" th:data-id="${hor.id}" th:data-doctor="${doc.nombre}"
+                                    th:data-cmp="${doc.cmp}" th:data-especialidad="${doc.especialidad}"
+                                    th:data-precio="${doc.precio}" th:data-fecha="${entry.key}"
+                                    th:data-hora="${hor.hora}">
+                                    <span th:text="${hor.hora}"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Detalles del Horario -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleModalLabel">Detalle del Horario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Doctor:</strong> <span id="modalDoctor"></span></p>
+                    <p><strong>Especialidad:</strong> <span id="modalEspecialidad"></span></p>
+                    <p><strong>CMP:</strong> <span id="modalCmp"></span></p>
+                    <p><strong>Fecha:</strong> <span id="modalFecha"></span></p>
+                    <p><strong>Hora:</strong> <span id="modalHora"></span></p>
+                    <p><strong>Precio:</strong> S/. <span id="modalPrecio"></span></p>
+                    <!-- Puedes añadir más campos si tu DTO tiene más atributos -->
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="/guardarHorarioSeleccionado">
+                        <input type="hidden" name="horario_id" id="formHorarioId">
+                        <input type="hidden" name="nombre" id="formNombre">
+                        <input type="hidden" name="cmp" id="formCmp">
+                        <input type="hidden" name="especialidad" id="formEspecialidad">
+                        <input type="hidden" name="precio" id="formPrecio">
+                        <input type="hidden" name="fecha" id="formFecha">
+                        <input type="hidden" name="hora" id="formHora">
+                        <button type="submit" class="btn btn-primary">Continuar</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const detalleModal = document.getElementById('detalleModal');
+
+        detalleModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            const horarioId = button.getAttribute('data-id');
+            const doctor = button.getAttribute('data-doctor');
+            const especialidad = button.getAttribute('data-especialidad');
+            const cmp = button.getAttribute('data-cmp');
+            const precio = button.getAttribute('data-precio');
+            const fecha = button.getAttribute('data-fecha');
+            const hora = button.getAttribute('data-hora');
+
+            // Mostrar en el modal
+            document.getElementById('modalDoctor').textContent = doctor;
+            document.getElementById('modalEspecialidad').textContent = especialidad;
+            document.getElementById('modalCmp').textContent = cmp;
+            document.getElementById('modalFecha').textContent = fecha;
+            document.getElementById('modalHora').textContent = hora;
+            document.getElementById('modalPrecio').textContent = precio;
+
+            // Llenar los inputs ocultos
+            document.getElementById('formHorarioId').value = horarioId;
+            document.getElementById('formNombre').value = doctor;
+            document.getElementById('formCmp').value = cmp;
+            document.getElementById('formEspecialidad').value = especialidad;
+            document.getElementById('formPrecio').value = precio;
+            // Convierte fecha '25/07/2025' a '2025-07-25'
+            const partesFecha = fecha.split("/");
+            const fechaISO = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
+
+            document.getElementById('formFecha').value = fechaISO;
+
+            document.getElementById('formHora').value = hora;
+        });
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

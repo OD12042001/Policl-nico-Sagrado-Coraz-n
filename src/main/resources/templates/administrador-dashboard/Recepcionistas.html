@@ -1,0 +1,35 @@
+<div th:fragment="contenido">
+    <div class="container mt-4">
+        <h2>Gestión de Recepcionistas</h2>
+
+        <a th:href="@{/administrador/recepcionista/nuevo}" class="btn btn-success mb-3">➕ Agregar Recepcionista</a>
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>DNI</th>
+                    <th>Correo</th>
+                    <th>Celular</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${listaRecepcionistas}">
+                    <td th:text="${r.id}"></td>
+                    <td th:text="${r.nombre} + ' ' + ${r.apellidoPaterno} + ' ' + ${r.apellidoMaterno}"></td>
+                    <td th:text="${r.dni}"></td>
+                    <td th:text="${r.correo}"></td>
+                    <td th:text="${r.celular}"></td>
+                    <td>
+                        <a th:href="@{'/administrador/recepcionista/modificar/' + ${r.id}}"
+                            class="btn btn-warning btn-sm">✏️</a>
+                        <a th:href="@{'/administrador/recepcionista/eliminar/' + ${r.dni}}" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Seguro que deseas eliminar este recepcionista?');">🗑️</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

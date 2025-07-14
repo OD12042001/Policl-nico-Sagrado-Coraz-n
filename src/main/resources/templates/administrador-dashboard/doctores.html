@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Doctores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div th:fragment="contenido">
+        <div class="container mt-4">
+            <h2>Lista de Doctores</h2>
+
+            <div class="d-flex justify-content-end mb-3">
+                <a class="btn btn-success" th:href="@{/administrador/doctor/nuevo}">➕ Agregar Doctor</a>
+            </div>
+
+            <form id="formDoctorSeleccionado" method="get">
+                <table class="table table-striped table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Seleccionar</th>
+                            <th>Nombre</th>
+                            <th>Especialidad</th>
+                            <th>cmp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="doc : ${listaDoctores}">
+                            <td>
+                                <input type="radio" name="doctorSeleccionado" th:value="${doc.id}">
+                            </td>
+                            <td th:text="${doc.nombre}">Dr. Nombre</td>
+                            <td th:text="${doc.especialidad}">Cardiología</td>
+                            <td th:text="${doc.cmp}">CMP1010</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" formaction="/administrador/doctor/modificar" class="btn btn-warning">
+                        ✏️ Modificar
+                    </button>
+
+                    <!--BOTON EN MANTENIMIENTO-->
+                    <button type="submit" formaction="/administrador/doctor/eliminar" class="btn btn-danger"
+                        onclick="return confirm('BOTON EN MANTENIMINETO, VOLVER A INTENTAR EN OTRO MOMENTO');">
+                        🗑️ Eliminar
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${doctor.id > 0 ? 'Modificar Doctor' : 'Nuevo Doctor'}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 th:text="${doctor.id > 0 ? 'Modificar Doctor' : 'Nuevo Doctor'}"></h2>
+
+        <form th:action="@{/administrador/doctor/guardar}" th:object="${doctor}" method="post">
+            <!-- ID oculto para edición -->
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" th:field="*{nombre}" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">CMP</label>
+                <input type="text" th:field="*{cmp}" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Especialidad</label>
+                <input list="especialidades" type="text" th:field="*{especialidad}" class="form-control" required />
+                <datalist id="especialidades">
+                    <option th:each="esp : ${listaEspecialidades}" th:value="${esp.nombre}"></option>
+                </datalist>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/portalAdministrador(contenido='administrador-dashboard/doctores')}"
+                    class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

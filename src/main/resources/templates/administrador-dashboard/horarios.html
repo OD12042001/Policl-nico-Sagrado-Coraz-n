@@ -1,0 +1,64 @@
+<div th:fragment="contenido">
+    <div class="container mt-4">
+        <h2>Gestión de Horarios</h2>
+
+        <!-- Filtro -->
+        <form method="get" th:action="@{/portalAdministrador}">
+            <input type="hidden" name="contenido" value="administrador-dashboard/horarios" />
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Disponibilidad</label>
+                    <select name="disponible" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="SI">Disponibles</option>
+                        <option value="NO">No Disponibles</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Fecha</label>
+                    <input type="date" name="fecha" class="form-control" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary">Filtrar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Tabla -->
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Doctor</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Disponible</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="horario : ${listaHorarios}">
+                    <td th:text="${horario.horarioID}"></td>
+                    <td th:text="${horario.nombreDoctor}"></td>
+                    <td th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${horario.hora}"></td>
+                    <td th:text="${horario.disponible}"></td>
+                    <td>
+                        <a th:href="@{'/administrador/horario/modificar/' + ${horario.horarioID}}"
+                            class="btn btn-warning btn-sm">Modificar</a>
+                        <a th:href="@{'/administrador/horario/apertura/' + ${horario.horarioID}}"
+                            th:if="${horario.disponible == 'NO'}" class="btn btn-success btn-sm"
+                            onclick="return confirm('¿Deseas habilitar este horario nuevamente?')">Apertura</a>
+
+                        <a th:href="@{'/administrador/horario/cierre/' + ${horario.horarioID}}"
+                            th:if="${horario.disponible == 'SI'}" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Deseas deshabilitar este horario?')">Cierre</a>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/administrador/horario/nuevo}" class="btn btn-success mt-3">➕ Agregar Horario</a>
+    </div>
+</div>

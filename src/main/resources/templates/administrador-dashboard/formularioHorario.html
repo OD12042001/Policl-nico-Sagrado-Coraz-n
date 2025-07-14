@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<body>
+    <form th:action="@{/administrador/horario/guardar}" method="post" th:object="${horario}">
+        <div class="mb-3">
+            <label class="form-label">Doctor</label>
+            <input list="doctores" type="text" th:field="*{nombreDoctor}" class="form-control" required />
+            <datalist id="doctores">
+                <option th:each="d : ${listaDoctores}" th:value="${d.nombre}"></option>
+            </datalist>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Fecha</label>
+            <input type="date" class="form-control" th:field="*{fecha}" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Hora</label>
+            <input type="time" class="form-control" th:field="*{hora}" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
