@@ -1,133 +1,346 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-    <title>Document</title>
+    <title>Reserva de Citas - Policlínico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .divisor {
+        :root {
+            --primary-color: #2a7f8d;
+            --secondary-color: #4caf50;
+            --accent-color: #ff7e5f;
+            --light-bg: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: space-between;
+            align-items: center;
         }
-
-        .caja1 {
-            flex: 1 1 300px;
-            min-width: 300px;
-            max-width: 45%;
+        
+        .navbar-brand img {
+            margin-right: 10px;
         }
-
-        .caja2 {
-            flex: 1 1 400px;
-            min-width: 300px;
+        
+        .nav-link {
+            font-weight: 500;
+            color: #555;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #1a616d);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            padding: 10px 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(42, 127, 141, 0.25);
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+        }
+        
+        .doctor-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .doctor-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .time-slot {
+            transition: all 0.3s;
+            border-radius: 8px;
+        }
+        
+        .time-slot:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .modal-content {
+            border-radius: 12px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), #1a616d);
+            color: white;
+            border-bottom: none;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .doctor-img {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
         }
     </style>
 </head>
-
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
-            <!-- Logo a la izquierda -->
-            <a class="navbar-brand" th:href="@{/index}">
-                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
-                Policlínico
-            </a>
+        <nav class="navbar navbar-expand-lg navbar-light px-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/index}">
+                    <img src="logo.png" alt="Logo" width="35" height="35" class="d-inline-block align-text-top" />
+                    Policlínico Salud Integral
+                </a>
 
-            <!-- Botón del navbar para móviles -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
-                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
-                <!-- Enlaces al centro -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="nosotros.html">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/horario}">Horario</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contacto.html">Contacto</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Si el usuario está logueado -->
-            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
-                        <li>
-                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="nosotros.html">
+                                <i class="fas fa-info-circle me-1"></i>Nosotros
+                            </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/horario}">
+                                <i class="far fa-calendar-alt me-1"></i>Horario
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacto.html">
+                                <i class="fas fa-envelope me-1"></i>Contacto
+                            </a>
                         </li>
                     </ul>
                 </div>
-            </div>
 
-            <!-- Si NO está logueado -->
-            <div class="d-flex" th:if="${session.usuarioActual == null}">
-                <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
-            </div>
-        </nav>
-    </header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container-fluid">
-            <form class="d-flex w-100" th:action="@{/horario}" method="get">
-                <!-- Filtro por nombre -->
-                <input class="form-control me-2" type="search" name="nombre" placeholder="Buscar por nombre"
-                    th:value="${param.nombre}" aria-label="Buscar">
-
-                <!-- Filtro por especialidad -->
-                <select class="form-select me-2" name="especialidad">
-                    <option value="">Todas las especialidades</option>
-                    <option th:each="esp : ${especialidades}" th:value="${esp.nombre}" th:text="${esp.nombre}"
-                        th:selected="${param.especialidad == esp.nombre}">
-                    </option>
-                </select>
-
-                <button class="btn btn-outline-success" type="submit">Filtrar</button>
-            </form>
-        </div>
-    </nav>
-
-    <section class="container py-4">
-        <div th:if="${doctores != null}">
-            <div th:each="doc : ${doctores}" class="mb-5 border rounded p-3 shadow-sm divisor">
-                <div class="d-flex flex-wrap align-items-center caja1">
-                    <div class="me-3">
-                        <img th:src="@{|/img/${doc.imagen}|}" alt="Foto doctor" class="img-fluid rounded" width="150">
-                    </div>
-                    <div>
-                        <h3 th:text="${doc.especialidad}"></h3>
-                        <h2 th:text="${doc.nombre}"></h2>
-                        <p class="text-muted">CMP <span th:text="${doc.cmp}"></span></p>
-                        <a href="#" class="btn btn-link p-0">Ver perfil</a>
+                <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span th:text="${session.usuarioActual.nombre}">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/redireccionPortal}">
+                                    <i class="fas fa-user me-2"></i>Mi portal
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="mt-4 caja2">
-                    <div th:each="entry : ${doc.horariosPorFecha}">
-                        <h5>📅 <span th:text="${entry.key}"></span></h5>
-                        <div class="row g-2">
-                            <div class="col-4 col-md-2" th:each="hor : ${entry.value}">
-                                <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                <div class="d-flex" th:if="${session.usuarioActual == null}">
+                    <a th:href="@{/login}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container my-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="far fa-calendar-plus me-2"></i>Reserva tu cita médica</h3>
+            </div>
+            <div class="card-body">
+                <!-- Primera fila: Especialidad -->
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-4">
+                        <h5 class="mb-0"><i class="fas fa-stethoscope me-2"></i>Especialidad médica</h5>
+                    </div>
+                    <div class="col-md-8">
+                        <form th:action="@{/horario}" method="get" class="d-flex">
+                            <select class="form-select" name="especialidad">
+                                <option value="">Todas las especialidades</option>
+                                <option th:each="esp : ${especialidades}" th:value="${esp.nombre}"
+                                    th:text="${esp.nombre}" th:selected="${param.especialidad == esp.nombre}">
+                                </option>
+                            </select>
+                            <button class="btn btn-primary ms-2" type="submit">
+                                <i class="fas fa-search me-1"></i> Buscar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Segunda fila: Filtros adicionales -->
+                <form th:action="@{/horario}" method="get" class="mt-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fecha" class="form-label"><i class="far fa-calendar me-2"></i>Buscar por fecha</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="far fa-calendar"></i></span>
+                                <input type="date" class="form-control" id="fecha" name="fecha"
+                                    th:value="${param.fecha}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label"><i class="fas fa-user-md me-2"></i>Buscar por doctor</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-md"></i></span>
+                                <input type="search" class="form-control" id="nombre" name="nombre"
+                                    th:value="${param.nombre}" placeholder="Nombre del doctor">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos ocultos para mantener la especialidad seleccionada -->
+                    <input type="hidden" name="especialidad" th:value="${param.especialidad}">
+
+                    <div class="d-flex justify-content-end mt-3 gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter me-1"></i> Aplicar filtros
+                        </button>
+                        <a th:href="@{/horario}" class="btn btn-outline-secondary">
+                            <i class="fas fa-sync-alt me-1"></i> Limpiar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-4">
+        <div th:if="${doctores != null}">
+            <div th:each="doc : ${doctores}" class="doctor-card bg-white p-4 mb-4">
+                <div class="row">
+                    <!-- Información del doctor -->
+                    <div class="col-md-4 d-flex align-items-center mb-3 mb-md-0">
+                        <div class="me-3">
+                            <img th:src="@{|/image/${doc.imagen}|}" alt="Foto doctor" class="doctor-img">
+                        </div>
+                        <div>
+                            <h4 class="mb-1" th:text="${doc.nombre}"></h4>
+                            <p class="text-primary mb-1" th:text="${doc.especialidad}"></p>
+                            <p class="text-muted small mb-0">CMP <span th:text="${doc.cmp}"></span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Horarios disponibles -->
+                    <div class="col-md-8">
+                        <div th:each="entry : ${doc.horariosPorFecha}">
+                            <h5 class="mb-2"><i class="far fa-calendar me-2"></i><span th:text="${entry.key}"></span></h5>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <button type="button" class="btn btn-outline-primary time-slot" data-bs-toggle="modal"
                                     data-bs-target="#detalleModal" th:data-id="${hor.id}" th:data-doctor="${doc.nombre}"
                                     th:data-cmp="${doc.cmp}" th:data-especialidad="${doc.especialidad}"
                                     th:data-precio="${doc.precio}" th:data-fecha="${entry.key}"
-                                    th:data-hora="${hor.hora}">
+                                    th:data-hora="${hor.hora}" th:each="hor : ${entry.value}">
                                     <span th:text="${hor.hora}"></span>
                                 </button>
                             </div>
@@ -136,26 +349,67 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Modal de Detalles del Horario -->
+    <!-- Modal de Confirmación de Cita -->
     <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+                <!-- Encabezado del Modal -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detalleModalLabel">Detalle del Horario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <h5 class="modal-title" id="detalleModalLabel"><i class="fas fa-calendar-check me-2"></i>Confirmar cita</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+
+                <!-- Cuerpo del Modal -->
                 <div class="modal-body">
-                    <p><strong>Doctor:</strong> <span id="modalDoctor"></span></p>
-                    <p><strong>Especialidad:</strong> <span id="modalEspecialidad"></span></p>
-                    <p><strong>CMP:</strong> <span id="modalCmp"></span></p>
-                    <p><strong>Fecha:</strong> <span id="modalFecha"></span></p>
-                    <p><strong>Hora:</strong> <span id="modalHora"></span></p>
-                    <p><strong>Precio:</strong> S/. <span id="modalPrecio"></span></p>
-                    <!-- Puedes añadir más campos si tu DTO tiene más atributos -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>Atención de pacientes mayores de 14 años
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <p class="mb-0">¿Deseas continuar con el agendamiento?</p>
+                    </div>
+
+                    <!-- Información de la cita -->
+                    <div class="card border-0 bg-light mb-4">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-4 text-muted">Médico</div>
+                                <div class="col-8 fw-bold" id="modalDoctor"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4 text-muted">Especialidad</div>
+                                <div class="col-8" id="modalEspecialidad"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4 text-muted">Fecha</div>
+                                <div class="col-8" id="modalFecha"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-4 text-muted">Hora</div>
+                                <div class="col-8" id="modalHora"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-muted">Tipo</div>
+                                <div class="col-8">Consulta Presencial</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="text-end mb-3">
+                        <span class="text-muted">Precio:</span>
+                        <span class="fw-bold text-primary fs-5 ms-2">S/. <span id="modalPrecio"></span></span>
+                    </div>
                 </div>
+
+                <!-- Pie del Modal -->
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+
                     <form method="post" action="/guardarHorarioSeleccionado">
                         <input type="hidden" name="horario_id" id="formHorarioId">
                         <input type="hidden" name="nombre" id="formNombre">
@@ -164,9 +418,10 @@
                         <input type="hidden" name="precio" id="formPrecio">
                         <input type="hidden" name="fecha" id="formFecha">
                         <input type="hidden" name="hora" id="formHora">
-                        <button type="submit" class="btn btn-primary">Continuar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-1"></i> Confirmar
+                        </button>
                     </form>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -178,6 +433,7 @@
         detalleModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
 
+            // Obtener datos de los atributos
             const horarioId = button.getAttribute('data-id');
             const doctor = button.getAttribute('data-doctor');
             const especialidad = button.getAttribute('data-especialidad');
@@ -189,9 +445,8 @@
             // Mostrar en el modal
             document.getElementById('modalDoctor').textContent = doctor;
             document.getElementById('modalEspecialidad').textContent = especialidad;
-            document.getElementById('modalCmp').textContent = cmp;
             document.getElementById('modalFecha').textContent = fecha;
-            document.getElementById('modalHora').textContent = hora;
+            document.getElementById('modalHora').textContent = formatHoraAMPM(hora);
             document.getElementById('modalPrecio').textContent = precio;
 
             // Llenar los inputs ocultos
@@ -200,21 +455,26 @@
             document.getElementById('formCmp').value = cmp;
             document.getElementById('formEspecialidad').value = especialidad;
             document.getElementById('formPrecio').value = precio;
-            // Convierte fecha '25/07/2025' a '2025-07-25'
+
+            // Conversión de fecha
             const partesFecha = fecha.split("/");
             const fechaISO = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
-
             document.getElementById('formFecha').value = fechaISO;
 
             document.getElementById('formHora').value = hora;
         });
+
+        // Función para formatear hora a AM/PM
+        function formatHoraAMPM(hora) {
+            if (!hora) return '';
+
+            const [hours, minutes] = hora.split(':');
+            const period = hours >= 12 ? 'p.m.' : 'a.m.';
+            const hours12 = hours % 12 || 12;
+            return `${hours12}:${minutes} ${period}`;
+        }
     </script>
 
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

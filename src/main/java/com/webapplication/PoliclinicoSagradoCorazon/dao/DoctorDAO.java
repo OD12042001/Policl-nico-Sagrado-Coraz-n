@@ -1,5 +1,6 @@
 package com.webapplication.PoliclinicoSagradoCorazon.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class DoctorDAO {
     private JdbcTemplate jdbc;
 
     public List<Doctor> listarTodos() {
-        String sql = "SELECT * FROM doctor";
+        String sql = "SELECT * FROM doctor WHERE estado = 'ACTIVO'";
         return jdbc.query(sql, new BeanPropertyRowMapper<>(Doctor.class));
     }
 
@@ -40,11 +41,52 @@ public class DoctorDAO {
                     SELECT d.id,
                         d.nombre,
                         e.nombre AS especialidad,
-                        d.cmp
+                        d.cmp,
+                        d.estado
                 FROM doctor d
                 JOIN especialidad e ON d.especialidad_id = e.id
                 """;
         return jdbc.query(sql, new BeanPropertyRowMapper<>(DoctorDTO.class));
+    }
+
+    public List<DoctorDTO> filtrarDoctores(String nombreFiltro, String especialidadFiltro) {
+        // Consulta SQL base
+        StringBuilder sql = new StringBuilder("""
+                SELECT d.id,
+                        d.nombre,
+                        e.nombre AS especialidad,
+                        d.cmp,
+                        d.estado
+                FROM doctor d
+                JOIN especialidad e ON d.especialidad_id = e.id
+                """);
+
+        // Lista para almacenar los parámetros
+        List<Object> params = new ArrayList<>();
+
+        // Condiciones para los filtros
+        List<String> conditions = new ArrayList<>();
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            conditions.add("LOWER(d.nombre) LIKE ?");
+            params.add("%" + nombreFiltro.toLowerCase() + "%");
+        }
+
+        if (especialidadFiltro != null && !especialidadFiltro.isBlank()) {
+            conditions.add("LOWER(e.nombre) = ?");
+            params.add(especialidadFiltro.toLowerCase());
+        }
+
+        // Agregar WHERE si hay condiciones
+        if (!conditions.isEmpty()) {
+            sql.append(" WHERE ").append(String.join(" AND ", conditions));
+        }
+
+        // Ejecutar la consulta
+        return jdbc.query(
+                sql.toString(),
+                params.toArray(),
+                new BeanPropertyRowMapper<>(DoctorDTO.class));
     }
 
     public DoctorDTO obtenerPorId(int id) {
@@ -83,9 +125,19 @@ public class DoctorDAO {
                 doctor.getId());
     }
 
-    public int obtenerIDporNombre(String nombreDoctor){
-            String sql = "SELECT id FROM doctor WHERE nombre = ?";
-            return jdbc.queryForObject(sql, Integer.class, nombreDoctor);
+    public int obtenerIDporNombre(String nombreDoctor) {
+        String sql = "SELECT id FROM doctor WHERE nombre = ?";
+        return jdbc.queryForObject(sql, Integer.class, nombreDoctor);
+    }
+
+    public void cambiarActivado(int iddoctor){
+        String sql = "UPDATE doctor SET estado = 'ACTIVO' WHERE id = ?";
+        jdbc.update(sql,iddoctor);
+    }
+
+    public void cambiarDesactivado(int iddoctor){
+        String sql = "UPDATE doctor SET estado = 'INACTIVO' WHERE id = ?";
+        jdbc.update(sql,iddoctor);
     }
 
     /*

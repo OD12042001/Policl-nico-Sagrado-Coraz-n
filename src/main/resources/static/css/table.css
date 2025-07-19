@@ -1,0 +1,307 @@
+/* table.css */
+
+/* Estilos generales del contenedor principal de la tabla */
+.main-content-section {
+  padding: 20px;
+  background-color: #f5f7fa; /* Fondo ligero para la sección */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+
+/* Estilos del encabezado de la sección (Título y descripción) */
+.content-header {
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+  align-items: flex-start; /* Alinea los elementos al inicio (arriba) */
+  margin-bottom: 20px;
+  gap: 15px; /* Espacio entre elementos del encabezado */
+  /* Por defecto, en pantallas pequeñas, que se apilen: */
+  flex-direction: column; /* Cambiado a column por defecto para móviles */
+}
+.content-header .text-section {
+  flex-grow: 1; /* Permite que ocupe el espacio disponible */
+  width: 100%; /* Ocupa el 100% del ancho disponible en su columna */
+}
+
+.content-header h2 {
+  font-size: 20px; /* Reducido un poco para que coincida con la imagen */
+  color: #333;
+  margin: 0;
+}
+
+.content-header p, span {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0 0 0; /* Un poco de margen superior */
+}
+
+/* Estilos para el contenedor de acciones en el encabezado */
+.header-actions {
+  display: flex;
+  gap: 10px; /* Espacio entre los botones */
+  flex-wrap: wrap; /* Permite que los botones se envuelvan */
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  flex-shrink: 0; /* Evita que los botones se encojan */
+  /* margin-left: auto; /* Puedes mantenerlo si quieres que empuje fuerte a la derecha */
+  align-self: flex-start; /* Alinea los botones al inicio de la línea en modo columna */
+  width: 100%; /* En modo columna, ocupa todo el ancho */
+}
+
+/* Estilos base para todos los botones del encabezado */
+.action-button,
+.add-button {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #424242;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre icono y texto */
+  transition: all 0.2s ease-in-out;
+}
+
+.action-button:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+/* Estilos específicos para el botón "Agregar Paciente" */
+.add-button {
+  background-color: #007bff; /* Azul primario */
+  color: #fff;
+  border-color: #007bff;
+}
+
+.add-button:hover {
+  background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+  border-color: #0056b3;
+}
+
+.add-button .fas,
+.action-button .fas {
+  font-size: 14px; /* Tamaño del icono */
+}
+
+/* Contenedor de la tabla para desbordamiento responsivo */
+.table-container {
+  overflow-x: auto; /* Permite el desplazamiento horizontal en pantallas pequeñas */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* Estilos de la tabla */
+table {
+  width: 100%;
+  border-collapse: separate; /* Para border-radius en las celdas */
+  border-spacing: 0; /* Elimina el espacio entre celdas */
+  min-width: 800px; /* Ancho mínimo para evitar que se comprima demasiado en móviles */
+}
+
+/* Estilos del encabezado de la tabla */
+thead {
+  background-color: #f8f9fa; /* Fondo gris claro para el thead */
+}
+
+th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  font-size: 13px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative; /* Para posicionar el icono de ordenación */
+  white-space: nowrap; /* Evita que el texto del encabezado se rompa */
+}
+
+th:first-child {
+  border-top-left-radius: 8px;
+  padding-left: 20px; /* Padding extra para el primer th */
+}
+
+th:last-child {
+  border-top-right-radius: 8px;
+  padding-right: 20px; /* Padding extra para el último th */
+}
+
+.sort-icon {
+  font-size: 10px;
+  color: #aaa;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* Estilos de las filas del cuerpo de la tabla */
+tbody tr {
+  border-bottom: 1px solid #f0f0f0; /* Separador entre filas */
+}
+
+tbody tr:last-child {
+  border-bottom: none; /* Sin borde en la última fila */
+}
+
+tbody tr:hover {
+  background-color: #fefefe; /* Ligero cambio de color al pasar el ratón */
+}
+
+td {
+  padding: 12px 15px;
+  color: #444;
+  font-size: 14px;
+  vertical-align: middle; /* Alineación vertical de celdas */
+  white-space: nowrap; /* Evita que el contenido de las celdas se rompa */
+}
+
+td:first-child {
+  padding-left: 20px; /* Padding extra para el primer td */
+  color: #888; /* Color para el número de fila */
+  font-weight: 500;
+}
+
+td:last-child {
+  padding-right: 20px; /* Padding extra para el último td */
+}
+
+/* Estilos para los distintivos de estado */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.vivo {
+  background-color: #e6ffe6; /* Verde claro */
+  color: #28a745; /* Verde oscuro */
+  border: 1px solid #28a745;
+}
+
+.status-badge.frio {
+  background-color: #ffe6e6; /* Rojo claro */
+  color: #dc3545; /* Rojo oscuro */
+  border: 1px solid #dc3545;
+}
+
+/* Estilos para las celdas de acciones */
+.table-actions {
+  display: flex;
+  gap: 5px; /* Espacio entre los botones de acción de la fila */
+  justify-content: flex-start; /* Alinea los botones a la izquierda dentro de la celda */
+}
+
+.action-icon-button {
+  background: none;
+  border: none;
+  color: #888; /* Color de los iconos por defecto */
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.action-icon-button:hover {
+  color: #007bff; /* Azul al pasar el ratón */
+  background-color: #f0f0f0;
+}
+
+/* Estilo para el botón de "más opciones" (tres puntos) */
+.action-icon-button.more-options {
+  color: #888;
+}
+
+/* Estilo para celdas cuando no hay datos */
+tbody tr td[colspan] {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start; /* Alinea los botones a la izquierda en pantallas pequeñas */
+    align-self: flex-start;
+  }
+
+  .action-button,
+  .add-button {
+    flex-grow: 1; /* Permite que los botones ocupen el ancho completo en pantallas pequeñas */
+    justify-content: center; /* Centra el contenido del botón */
+  }
+
+  /* En pantallas más pequeñas, la tabla puede desbordarse, por eso el overflow-x es importante */
+  table {
+    min-width: 600px; /* Asegura un ancho mínimo para la tabla */
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content-section {
+    padding: 15px;
+  }
+
+  .content-header h2 {
+    font-size: 20px;
+  }
+
+  .content-header p {
+    font-size: 13px;
+  }
+
+  .action-button,
+  .add-button {
+    padding: 8px 12px;
+    font-size: 13px;
+    gap: 5px;
+  }
+
+  th,
+  td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  td:first-child,
+  th:first-child {
+    padding-left: 15px;
+  }
+
+  td:last-child,
+  th:last-child {
+    padding-right: 15px;
+  }
+}
+@media (min-width: 769px) {
+  /* Este es el media query clave para pantallas grandes */
+  .content-header {
+    flex-direction: row; /* ¡Ahora en fila para pantallas grandes! */
+    justify-content: space-between; /* Título a la izquierda, acciones a la derecha */
+    align-items: center; /* Centra verticalmente los elementos de la fila */
+  }
+
+  .content-header .text-section {
+    width: auto; /* Permite que el texto ocupe solo el espacio necesario */
+  }
+
+  .header-actions {
+    width: auto; /* Permite que los botones ocupen solo el espacio necesario */
+    margin-left: auto; /* Esto empuja los botones a la derecha si hay espacio */
+    align-self: center; /* Centra verticalmente los botones en la fila */
+  }
+}

@@ -25,13 +25,49 @@ public class HorarioDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(Horario.class), doctorId);
     }
 
-    public List<Horario> obtenerPorDoctorYFechas(int doctorId, LocalDate fechaInicio, LocalDate fechaFin) {
-        String sql = "SELECT * FROM horario WHERE doctor_id = ? AND fecha BETWEEN ? AND ? ORDER BY fecha, hora";
-        return jdbc.query(sql, new BeanPropertyRowMapper<>(Horario.class), doctorId, fechaInicio, fechaFin);
+    // obtiene los horarios no utilizado y disponibles de la fecha y hora actual
+    // para adelante
+    public List<Horario> obtenerHorariosDisponibles(int doctorId, LocalDate fechaActual, LocalTime horaActual) {
+        String sql = "SELECT * FROM horario WHERE doctor_id = ? " +
+                "AND estado = 'NOUTILIZADO' " +
+                "AND disponible = 'SI' " +
+                "AND (fecha > ? OR (fecha = ? AND hora > ?)) " +
+                "ORDER BY fecha, hora";
+        return jdbc.query(sql, new BeanPropertyRowMapper<>(Horario.class), doctorId, fechaActual, fechaActual,
+                horaActual);
+    }
+
+    //obtiene todos los horarios filtrados por fecha y de la hora actual para adelante
+    public List<Horario> obtenerHorariosDisponiblesPorFecha(int doctorId, LocalDate fecha, LocalTime hora) {
+        String sql;
+        List<Object> params = new ArrayList<>();
+
+        params.add(doctorId);
+        params.add(fecha);
+
+        if (hora != null) {
+            // Si hay hora, significa que es la fecha actual y debemos filtrar horas futuras
+            sql = "SELECT * FROM horario WHERE doctor_id = ? " +
+                    "AND fecha = ? " +
+                    "AND hora > ? " +
+                    "AND estado = 'NOUTILIZADO' " +
+                    "AND disponible = 'SI' " +
+                    "ORDER BY hora";
+            params.add(hora);
+        } else {
+            // Para otras fechas, mostramos todas las horas del día
+            sql = "SELECT * FROM horario WHERE doctor_id = ? " +
+                    "AND fecha = ? " +
+                    "AND estado = 'NOUTILIZADO' " +
+                    "AND disponible = 'SI' " +
+                    "ORDER BY hora";
+        }
+
+        return jdbc.query(sql, new BeanPropertyRowMapper<>(Horario.class), params.toArray());
     }
 
     public void marcarComoNoDisponible(int horarioId) {
-        String sql = "UPDATE horario SET disponible = 'NO' WHERE id = ?";
+        String sql = "UPDATE horario SET disponible = 'NO', estado = 'NOUTILIZADO' WHERE id = ?";
         jdbc.update(sql, horarioId);
     }
 
@@ -41,7 +77,7 @@ public class HorarioDAO {
     }
 
     public void actualizarDisponibilidad(int horarioId, String disponibilidad) {
-        String sql = "UPDATE horario SET disponible = ? WHERE id = ?";
+        String sql = "UPDATE horario SET disponible = ?, estado = 'NOUTILIZADO'  WHERE id = ?";
         jdbc.update(sql, disponibilidad, horarioId);
     }
 
@@ -60,26 +96,31 @@ public class HorarioDAO {
     }
 
     public List<HorarioDTO> obtenerDisponiblesPorespecialidad(int especialidad_id) {
-        String sql = """
-                    SELECT h.id AS horarioID,
-                        d.nombre AS nombreDoctor,
-                        h.fecha,
-                        h.hora,
-                        h.disponible,
-                        e.nombre AS nombreEspecialidad
-                    FROM horario h
-                    JOIN doctor d ON h.doctor_id = d.id
-                    JOIN especialidad e ON d.especialidad_id = e.id
-                    WHERE e.id = ? AND disponible = 'SI'
-                """;
+    String sql = """
+                SELECT h.id AS horarioID,
+                    d.nombre AS nombreDoctor,
+                    h.fecha,
+                    h.hora,
+                    h.disponible,
+                    e.nombre AS nombreEspecialidad
+                FROM horario h
+                JOIN doctor d ON h.doctor_id = d.id
+                JOIN especialidad e ON d.especialidad_id = e.id
+                WHERE e.id = ? 
+                AND disponible = 'SI' 
+                AND h.estado = 'NOUTILIZADO'
+                AND (h.fecha > CURRENT_DATE OR 
+                    (h.fecha = CURRENT_DATE AND h.hora > CURRENT_TIME))
+                ORDER BY h.fecha ASC, h.hora ASC
+            """;
 
-        return jdbc.query(sql, new BeanPropertyRowMapper<>(HorarioDTO.class), especialidad_id);
-    }
+    return jdbc.query(sql, new BeanPropertyRowMapper<>(HorarioDTO.class), especialidad_id);
+}
 
     public void actualizarDisponibilidadPorCitaId(int citaId, String disponibilidad) {
         String sql = """
                     UPDATE horario
-                    SET disponible = ?
+                    SET disponible = ?, estado = 'NOUTILIZADO' 
                     WHERE id = (
                         SELECT horario_id FROM cita WHERE id = ?
                     )
@@ -100,6 +141,7 @@ public class HorarioDAO {
                     FROM horario h
                     JOIN doctor d ON h.doctor_id = d.id
                     JOIN especialidad e ON d.especialidad_id = e.id
+                    WHERE h.estado = 'NOUTILIZADO'
                 """;
 
         return jdbc.query(sql, new BeanPropertyRowMapper<>(HorarioDTO.class));
@@ -115,12 +157,12 @@ public class HorarioDAO {
         List<Object> params = new ArrayList<>();
 
         if (disponible != null && !disponible.isBlank()) {
-            sql.append(" AND h.disponible = ?");
+            sql.append(" AND h.disponible = ? AND h.estado = 'NOUTILIZADO'");
             params.add(disponible);
         }
 
         if (fecha != null) {
-            sql.append(" AND h.fecha = ?");
+            sql.append(" AND h.fecha = ? AND h.estado = 'NOUTILIZADO'");
             params.add(Date.valueOf(fecha));
         }
 

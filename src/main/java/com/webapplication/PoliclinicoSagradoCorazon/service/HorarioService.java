@@ -32,17 +32,28 @@ public class HorarioService {
     @Autowired
     private EspecialidadDAO especialidadDAO;
 
-    public List<DoctorHorarioDTO> obtenerDoctoresConHorarios() {
+    public List<DoctorHorarioDTO> obtenerDoctoresConHorarios(LocalDate fechaFiltro) {
+        // lsitar todos los doctores activos
         List<Doctor> doctores = doctorDAO.listarTodos();
+
+        // declarar lista de doctores con sus horarios
         List<DoctorHorarioDTO> resultado = new ArrayList<>();
 
-        LocalDate fechaInicio = LocalDate.of(2025, 7, 14);
-        LocalDate fechaFin = LocalDate.of(2025, 7, 27);
+        // obetener variables de fecha y hora actual
+        LocalDate fechaActual = LocalDate.now();
+        LocalTime horaActual = LocalTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         for (Doctor doc : doctores) {
-            List<Horario> horarios = horarioDAO.obtenerPorDoctorYFechas(doc.getId(), fechaInicio, fechaFin);
-
+            List<Horario> horarios;
+            if (fechaFiltro != null) {
+                // Si hay filtro por fecha, obtener solo los horarios de esa fecha
+                horarios = horarioDAO.obtenerHorariosDisponiblesPorFecha(doc.getId(), fechaFiltro,
+                        fechaFiltro.equals(fechaActual) ? horaActual : null);
+            } else {
+                // Sin filtro por fecha, obtener todos los horarios futuros
+                horarios = horarioDAO.obtenerHorariosDisponibles(doc.getId(), fechaActual, horaActual);
+            }
             // Filtrar horarios que estén disponibles
             List<Horario> horariosDisponibles = horarios.stream()
                     .filter(h -> "SI".equalsIgnoreCase(h.getDisponible()))
@@ -108,11 +119,11 @@ public class HorarioService {
         horarioDAO.actualizarDisponibilidad(horarioId, estado);
     }
 
-    public boolean existeHorarioParaDoctor(int doctorId,LocalDate fecha, LocalTime hora, int horarioId ){
-        return horarioDAO.existeHorarioParaDoctor(doctorId,fecha, hora, horarioId );
+    public boolean existeHorarioParaDoctor(int doctorId, LocalDate fecha, LocalTime hora, int horarioId) {
+        return horarioDAO.existeHorarioParaDoctor(doctorId, fecha, hora, horarioId);
     }
 
-    public void actualizar(Horario horario){
+    public void actualizar(Horario horario) {
         horarioDAO.actualizar(horario);
     }
 }

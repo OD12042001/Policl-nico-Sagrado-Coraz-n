@@ -61,9 +61,15 @@ public class RecepcionistaService {
         System.out.println("ya inserto pe gaaaaaaaaaaaaaaaaaaa");
     }
 
-    public void eliminar(String dni){
-        System.out.println("error 111111111111111111111111111111");
-        recepcionistaDAO.eliminar(dni);
+    public void activar(String dni){
+        
+        recepcionistaDAO.activar(dni);
+        
+    }
+
+    public void desactivar(String dni){
+        
+        recepcionistaDAO.desactivar(dni);
         
     }
 }

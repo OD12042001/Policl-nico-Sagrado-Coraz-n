@@ -9,15 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioSeleccionadoDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.PacienteDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Cita;
+import com.webapplication.PoliclinicoSagradoCorazon.model.Paciente1;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
 import com.webapplication.PoliclinicoSagradoCorazon.service.CitaService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.DoctorService;
+import com.webapplication.PoliclinicoSagradoCorazon.service.EmailService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.HorarioService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.PacienteService;
 
@@ -37,7 +40,10 @@ public class CitaController {
 
     @Autowired
     private DoctorService doctorService;
-    
+
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping("/confirmar-cita")
     public String confirmarCita() {
         // Aquí podrías guardar datos si quieres, o dejar vacío si no haces nada
@@ -106,8 +112,34 @@ public class CitaController {
     }
 
     @GetMapping("/paciente/cita/cancelar/{id}")
-    public String cancelarCita(@PathVariable("id") int citaId) {
+    public String cancelarCita(@PathVariable("id") int citaId, RedirectAttributes redirectAttributes) {
         citaService.cancelarCitaInteligente(citaId);
+        /*
+         * try {
+         * // Cancelar la cita y obtener datos del paciente
+         * 
+         * Cita cita = citaService.obtenerPorId(citaId);
+         * Paciente1 paciente =pacienteService.obtenerPorId(cita.getPaciente_id());
+         * Horario horario = horarioService.obtenerPorId(cita.getHorario_id());
+         * // Obtener datos para el email
+         * 
+         * String fechaHora = horario.getFecha().toString() + " " +
+         * horario.getHora().toString();
+         * 
+         * // Enviar email de cancelación
+         * emailService.enviarEmailCancelacion(
+         * paciente.getCorreo(),
+         * paciente.getNombre(),
+         * fechaHora,
+         * "Cancelación de la cita del paciente");
+         * 
+         * redirectAttributes.addFlashAttribute("success",
+         * "Cita cancelada y notificación enviada");
+         * } catch (Exception e) {
+         * redirectAttributes.addFlashAttribute("error", "Error al cancelar la cita: " +
+         * e.getMessage());
+         * }
+         */
         return "redirect:/portalPaciente?contenido=paciente-dashboard/MisCitas";
     }
 
@@ -133,10 +165,13 @@ public class CitaController {
         int especialidad_id = doctorService.obetenerEspecialidadID(doctorId);
         // Obtener horarios disponibles del mismo doctor
         List<HorarioDTO> horariosDisponibles = horarioService.obtenerDisponiblesPorespecialidad(especialidad_id);
-        
+
         model.addAttribute("cita", cita);
         model.addAttribute("horarios", horariosDisponibles);
-        return "paciente-dashboard/modificarCita"; // tu HTML para modificar
+        session.setAttribute("modificarCita_cita", cita);
+        session.setAttribute("modificarCita_horarios", horariosDisponibles);
+
+        return "redirect:/portalPaciente?contenido=paciente-dashboard/modificarCita";
     }
 
     @GetMapping("/recepcionista/cita/modificar/{id}")
@@ -149,10 +184,13 @@ public class CitaController {
         int especialidad_id = doctorService.obetenerEspecialidadID(doctorId);
         // Obtener horarios disponibles del mismo doctor
         List<HorarioDTO> horariosDisponibles = horarioService.obtenerDisponiblesPorespecialidad(especialidad_id);
-        
-        model.addAttribute("cita", cita);
-        model.addAttribute("horarios", horariosDisponibles);
-        return "recepcionista-dashboard/modificarCita"; // tu HTML para modificar
+
+        // Guardar en sesión
+        session.setAttribute("citaModificar", cita);
+        session.setAttribute("horariosDisponibles", horariosDisponibles);
+
+        // Redirigir al portal con el contenido específico
+        return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/modificarCita";
     }
 
     @PostMapping("/paciente/cita/modificar")

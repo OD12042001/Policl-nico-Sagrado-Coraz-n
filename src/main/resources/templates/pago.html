@@ -1,238 +1,569 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
-    <title>Pago</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Proceso de Pago - Policlínico</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2a7f8d;
+            --secondary-color: #4caf50;
+            --accent-color: #ff7e5f;
+            --light-bg: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand img {
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: #555;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #1a616d);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            padding: 10px 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-outline-success {
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-success:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .resumen-cita p {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .resumen-cita p:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .resumen-cita strong {
+            color: var(--primary-color);
+            display: inline-block;
+            min-width: 120px;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        .form-control {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(42, 127, 141, 0.25);
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+        }
+        
+        .payment-method {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .payment-method h5 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 20px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
-
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
-            <!-- Logo a la izquierda -->
-            <a class="navbar-brand" th:href="@{/index}">
-                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
-                Policlínico
-            </a>
+        <nav class="navbar navbar-expand-lg navbar-light px-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/index}">
+                    <img src="logo.png" alt="Logo" width="35" height="35" class="d-inline-block align-text-top" />
+                    Policlínico Salud Integral
+                </a>
 
-            <!-- Botón del navbar para móviles -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
-                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
-                <!-- Enlaces al centro -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="nosotros.html">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/horario}">Horario</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contacto.html">Contacto</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Si el usuario está logueado -->
-            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
-                        <li>
-                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="nosotros.html">
+                                <i class="fas fa-info-circle me-1"></i>Nosotros
+                            </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/horario}">
+                                <i class="far fa-calendar-alt me-1"></i>Horario
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacto.html">
+                                <i class="fas fa-envelope me-1"></i>Contacto
+                            </a>
                         </li>
                     </ul>
                 </div>
-            </div>
 
-            <!-- Si NO está logueado -->
-            <div class="d-flex" th:if="${session.usuarioActual == null}">
-                <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
+                <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span th:text="${session.usuarioActual.nombre}">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/redireccionPortal}">
+                                    <i class="fas fa-user me-2"></i>Mi portal
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="d-flex" th:if="${session.usuarioActual == null}">
+                    <a th:href="@{/login}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                    </a>
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container py-4">
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mb-4" style="color: var(--primary-color);">
+                    <i class="fas fa-credit-card me-2"></i>Proceso de Pago
+                </h2>
+                <p class="text-center mb-5">Complete los datos requeridos para confirmar su cita médica</p>
+            </div>
+        </div>
+        
         <div class="row">
             <!-- Lado Izquierdo: Detalles de la cita -->
             <div class="col-md-6">
-                <h4>Resumen de la Cita</h4>
-                <p><strong>Doctor:</strong> <span th:text="${horarioSeleccionado.nombre}"></span></p>
-                <p><strong>Especialidad:</strong> <span th:text="${horarioSeleccionado.especialidad}"></span></p>
-                <p><strong>Fecha:</strong> <span th:text="${horarioSeleccionado.fecha}"></span></p>
-                <p><strong>Hora:</strong> <span th:text="${horarioSeleccionado.hora}"></span></p>
-                <p><strong>Precio:</strong> S/. <span th:text="${horarioSeleccionado.precio}"></span></p>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="far fa-calendar-check me-2"></i>Resumen de la Cita
+                    </div>
+                    <div class="card-body resumen-cita">
+                        <p>
+                            <strong><i class="fas fa-user-md me-2"></i>Doctor:</strong> 
+                            <span th:text="${horarioSeleccionado.nombre}"></span>
+                        </p>
+                        <p>
+                            <strong><i class="fas fa-stethoscope me-2"></i>Especialidad:</strong> 
+                            <span th:text="${horarioSeleccionado.especialidad}"></span>
+                        </p>
+                        <p>
+                            <strong><i class="far fa-calendar me-2"></i>Fecha:</strong> 
+                            <span th:text="${#temporals.format(horarioSeleccionado.fecha, 'EEEE, dd MMMM yyyy')}"></span>
+                        </p>
+                        <p>
+                            <strong><i class="far fa-clock me-2"></i>Hora:</strong> 
+                            <span th:text="${horarioSeleccionado.hora}"></span>
+                        </p>
+                        <p>
+                            <strong><i class="fas fa-money-bill-wave me-2"></i>Precio:</strong> 
+                            S/. <span th:text="${horarioSeleccionado.precio}"></span>
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <!-- Lado Derecho: Métodos de pago -->
             <div class="col-md-6">
-                <h4>Selecciona método de pago</h4>
-
-                <!-- Solo mostrar para Paciente -->
-                <th:block th:if="${rolUsuario == 'paciente'}">
-                    <div class="mb-4">
-                        <!-- Botones de selección -->
-                        <div class="btn-group mb-3" role="group">
-                            <button type="button" class="btn btn-outline-primary" id="btnTarjeta">Pagar con
-                                Tarjeta</button>
-                            <button type="button" class="btn btn-outline-success" id="btnYape">Pagar con Yape</button>
-                        </div>
-
-                        <!-- Formulario Tarjeta -->
-                        <form method="post" action="/procesar-pago" id="formTarjeta">
-                            <div class="card card-body border-primary">
-                                <h5>Método: Tarjeta</h5>
-                                <input type="text" class="form-control mt-2" placeholder="Número de tarjeta" required>
-                                <input type="text" class="form-control mt-2" placeholder="Titular" required>
-                                <input type="text" class="form-control mt-2" placeholder="CVV" required>
-                                <input type="month" class="form-control mt-2" placeholder="MM/YY" required>
-                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
-                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
-                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
-                                <input type="hidden" name="metodo" value="TARJETA">
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" required>
-                                    <label class="form-check-label">Aceptar términos y condiciones</label>
-                                </div>
-                                <button class="btn btn-primary mt-3">Pagar</button>
-                            </div>
-                        </form>
-
-                        <!-- Formulario Yape (oculto al inicio) -->
-                        <form method="post" action="/procesar-pago" id="formYape" style="display: none;">
-                            <div class="card card-body border-success">
-                                <h5>Método: Yape</h5>
-                                <input type="text" class="form-control mt-2" placeholder="Número de celular Yape" required>
-                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
-                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
-                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
-                                <input type="hidden" name="metodo" value="YAPE">
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" required>
-                                    <label class="form-check-label">Aceptar términos y condiciones</label>
-                                </div>
-                                <button class="btn btn-success mt-3">Pagar</button>
-                            </div>
-                        </form>
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-wallet me-2"></i>Método de Pago
                     </div>
-                </th:block>
-
-                <!-- Para todos (Recepcionista) -->
-                <th:block th:if="${rolUsuario == 'recepcionista'}">
-                    <div class="mb-4">
-                        <!-- Botones para cambiar de método -->
-                        <div class="btn-group mb-3" role="group">
-                            <button type="button" class="btn btn-outline-primary" id="btnTarjetaRec">Tarjeta</button>
-                            <button type="button" class="btn btn-outline-success" id="btnYapeRec">Yape</button>
-                            <button type="button" class="btn btn-outline-secondary"
-                                id="btnEfectivoRec">Efectivo</button>
-                        </div>
-
-                        <!-- Formulario: Tarjeta -->
-                        <form method="post" action="/procesar-pago" id="formTarjetaRec">
-                            <div class="card card-body border-primary">
-                                <h5>Método: Tarjeta</h5>
-                                <input type="text" class="form-control mt-2" placeholder="Número de tarjeta" required>
-                                <input type="text" class="form-control mt-2" placeholder="Titular" required>
-                                <input type="text" class="form-control mt-2" placeholder="CVV" required>
-                                <input type="month" class="form-control mt-2" placeholder="MM/YY" required>
-                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
-                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
-                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
-                                <input type="hidden" name="metodo" value="TARJETA">
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" required>
-                                    <label class="form-check-label">Aceptar términos y condiciones</label>
+                    <div class="card-body">
+                        <!-- Solo mostrar para Paciente -->
+                        <th:block th:if="${rolUsuario == 'paciente'}">
+                            <div class="mb-4">
+                                <h5 class="mb-3"><i class="fas fa-mobile-alt payment-icon"></i>Seleccione su método de pago</h5>
+                                
+                                <!-- Botones de selección -->
+                                <div class="btn-group w-100 mb-4" role="group">
+                                    <button type="button" class="btn btn-outline-primary" id="btnTarjeta">
+                                        <i class="far fa-credit-card me-2"></i>Tarjeta
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success" id="btnYape">
+                                        <i class="fas fa-mobile-alt me-2"></i>Yape
+                                    </button>
                                 </div>
-                                <button class="btn btn-primary mt-3">Pagar</button>
-                            </div>
-                        </form>
 
-                        <!-- Formulario: Yape -->
-                        <form method="post" action="/procesar-pago" id="formYapeRec" style="display: none;">
-                            <div class="card card-body border-success">
-                                <h5>Método: Yape</h5>
-                                <input type="text" class="form-control mt-2" placeholder="Número de celular Yape" required>
-                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
-                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
-                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
-                                <input type="hidden" name="metodo" value="YAPE">
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" required>
-                                    <label class="form-check-label">Aceptar términos y condiciones</label>
-                                </div>
-                                <button class="btn btn-success mt-3">Pagar</button>
-                            </div>
-                        </form>
+                                <!-- Formulario Tarjeta -->
+                                <form method="post" action="/procesar-pago" id="formTarjeta">
+                                    <div class="payment-method border-primary">
+                                        <h5><i class="far fa-credit-card me-2"></i>Pago con Tarjeta</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Número de tarjeta</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="far fa-credit-card"></i></span>
+                                                <input type="text" class="form-control" placeholder="1234 5678 9012 3456" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Titular de la tarjeta</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="far fa-user"></i></span>
+                                                <input type="text" class="form-control" placeholder="Nombre como aparece en la tarjeta" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Fecha de expiración</label>
+                                                <input type="month" class="form-control" placeholder="MM/AA" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">CVV</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                                    <input type="text" class="form-control" placeholder="123" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                        <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                        <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                        <input type="hidden" name="metodo" value="TARJETA">
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="checkbox" id="termsTarjeta" required>
+                                            <label class="form-check-label" for="termsTarjeta">Acepto los términos y condiciones del servicio</label>
+                                        </div>
+                                        <button class="btn btn-primary w-100 mt-3">
+                                            <i class="far fa-credit-card me-2"></i>Pagar con Tarjeta
+                                        </button>
+                                    </div>
+                                </form>
 
-                        <!-- Formulario: Efectivo -->
-                        <form method="post" action="/procesar-pago" id="formEfectivoRec"
-                            style="display: none;">
-                            <div class="card card-body border-secondary">
-                                <h5>Método: Efectivo</h5>
-                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
-                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
-                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
-                                <input type="hidden" name="metodo" value="EFECTIVO">
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" required>
-                                    <label class="form-check-label">Confirmo que el pago se realizará en
-                                        efectivo</label>
-                                </div>
-                                <button class="btn btn-secondary mt-3">Pagar</button>
+                                <!-- Formulario Yape (oculto al inicio) -->
+                                <form method="post" action="/procesar-pago" id="formYape" style="display: none;">
+                                    <div class="payment-method border-success">
+                                        <h5><i class="fas fa-mobile-alt me-2"></i>Pago con Yape</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Número de celular asociado a Yape</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                                <input type="text" class="form-control" placeholder="987 654 321" required>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                        <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                        <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                        <input type="hidden" name="metodo" value="YAPE">
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="checkbox" id="termsYape" required>
+                                            <label class="form-check-label" for="termsYape">Acepto los términos y condiciones del servicio</label>
+                                        </div>
+                                        <button class="btn btn-success w-100 mt-3">
+                                            <i class="fas fa-mobile-alt me-2"></i>Pagar con Yape
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </th:block>
+
+                        <!-- Para todos (Recepcionista) -->
+                        <th:block th:if="${rolUsuario == 'recepcionista'}">
+                            <div class="mb-4">
+                                <h5 class="mb-3"><i class="fas fa-cash-register payment-icon"></i>Métodos de pago disponibles</h5>
+                                
+                                <!-- Botones para cambiar de método -->
+                                <div class="btn-group w-100 mb-4" role="group">
+                                    <button type="button" class="btn btn-outline-primary" id="btnTarjetaRec">
+                                        <i class="far fa-credit-card me-2"></i>Tarjeta
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success" id="btnYapeRec">
+                                        <i class="fas fa-mobile-alt me-2"></i>Yape
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEfectivoRec">
+                                        <i class="fas fa-money-bill-wave me-2"></i>Efectivo
+                                    </button>
+                                </div>
+
+                                <!-- Formulario: Tarjeta -->
+                                <form method="post" action="/procesar-pago" id="formTarjetaRec">
+                                    <div class="payment-method border-primary">
+                                        <h5><i class="far fa-credit-card me-2"></i>Pago con Tarjeta</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Número de tarjeta</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="far fa-credit-card"></i></span>
+                                                <input type="text" class="form-control" placeholder="1234 5678 9012 3456" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Titular de la tarjeta</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="far fa-user"></i></span>
+                                                <input type="text" class="form-control" placeholder="Nombre como aparece en la tarjeta" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Fecha de expiración</label>
+                                                <input type="month" class="form-control" placeholder="MM/AA" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">CVV</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                                    <input type="text" class="form-control" placeholder="123" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                        <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                        <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                        <input type="hidden" name="metodo" value="TARJETA">
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="checkbox" id="termsTarjetaRec" required>
+                                            <label class="form-check-label" for="termsTarjetaRec">Acepto los términos y condiciones del servicio</label>
+                                        </div>
+                                        <button class="btn btn-primary w-100 mt-3">
+                                            <i class="far fa-credit-card me-2"></i>Procesar Pago con Tarjeta
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <!-- Formulario: Yape -->
+                                <form method="post" action="/procesar-pago" id="formYapeRec" style="display: none;">
+                                    <div class="payment-method border-success">
+                                        <h5><i class="fas fa-mobile-alt me-2"></i>Pago con Yape</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Número de celular asociado a Yape</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                                <input type="text" class="form-control" placeholder="987 654 321" required>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                        <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                        <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                        <input type="hidden" name="metodo" value="YAPE">
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="checkbox" id="termsYapeRec" required>
+                                            <label class="form-check-label" for="termsYapeRec">Acepto los términos y condiciones del servicio</label>
+                                        </div>
+                                        <button class="btn btn-success w-100 mt-3">
+                                            <i class="fas fa-mobile-alt me-2"></i>Procesar Pago con Yape
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <!-- Formulario: Efectivo -->
+                                <form method="post" action="/procesar-pago" id="formEfectivoRec" style="display: none;">
+                                    <div class="payment-method border-secondary">
+                                        <h5><i class="fas fa-money-bill-wave me-2"></i>Pago en Efectivo</h5>
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>El pago se realizará directamente en recepción
+                                        </div>
+                                        <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                        <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                        <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                        <input type="hidden" name="metodo" value="EFECTIVO">
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="checkbox" id="termsEfectivoRec" required>
+                                            <label class="form-check-label" for="termsEfectivoRec">Confirmo que el paciente realizará el pago en efectivo</label>
+                                        </div>
+                                        <button class="btn btn-secondary w-100 mt-3">
+                                            <i class="fas fa-money-bill-wave me-2"></i>Confirmar Pago en Efectivo
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </th:block>
                     </div>
-                </th:block>
-
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Funcionalidad para pacientes
         document.getElementById('btnTarjeta').addEventListener('click', function () {
             document.getElementById('formTarjeta').style.display = 'block';
             document.getElementById('formYape').style.display = 'none';
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+            document.getElementById('btnYape').classList.remove('btn-success');
+            document.getElementById('btnYape').classList.add('btn-outline-success');
         });
 
         document.getElementById('btnYape').addEventListener('click', function () {
             document.getElementById('formYape').style.display = 'block';
             document.getElementById('formTarjeta').style.display = 'none';
+            this.classList.remove('btn-outline-success');
+            this.classList.add('btn-success');
+            document.getElementById('btnTarjeta').classList.remove('btn-primary');
+            document.getElementById('btnTarjeta').classList.add('btn-outline-primary');
         });
-    </script>
-    <script>
+
+        // Funcionalidad para recepcionistas
         document.getElementById('btnTarjetaRec').addEventListener('click', function () {
             document.getElementById('formTarjetaRec').style.display = 'block';
             document.getElementById('formYapeRec').style.display = 'none';
             document.getElementById('formEfectivoRec').style.display = 'none';
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+            document.getElementById('btnYapeRec').classList.remove('btn-success');
+            document.getElementById('btnYapeRec').classList.add('btn-outline-success');
+            document.getElementById('btnEfectivoRec').classList.remove('btn-secondary');
+            document.getElementById('btnEfectivoRec').classList.add('btn-outline-secondary');
         });
 
         document.getElementById('btnYapeRec').addEventListener('click', function () {
             document.getElementById('formYapeRec').style.display = 'block';
             document.getElementById('formTarjetaRec').style.display = 'none';
             document.getElementById('formEfectivoRec').style.display = 'none';
+            this.classList.remove('btn-outline-success');
+            this.classList.add('btn-success');
+            document.getElementById('btnTarjetaRec').classList.remove('btn-primary');
+            document.getElementById('btnTarjetaRec').classList.add('btn-outline-primary');
+            document.getElementById('btnEfectivoRec').classList.remove('btn-secondary');
+            document.getElementById('btnEfectivoRec').classList.add('btn-outline-secondary');
         });
 
         document.getElementById('btnEfectivoRec').addEventListener('click', function () {
             document.getElementById('formEfectivoRec').style.display = 'block';
             document.getElementById('formTarjetaRec').style.display = 'none';
             document.getElementById('formYapeRec').style.display = 'none';
+            this.classList.remove('btn-outline-secondary');
+            this.classList.add('btn-secondary');
+            document.getElementById('btnTarjetaRec').classList.remove('btn-primary');
+            document.getElementById('btnTarjetaRec').classList.add('btn-outline-primary');
+            document.getElementById('btnYapeRec').classList.remove('btn-success');
+            document.getElementById('btnYapeRec').classList.add('btn-outline-success');
         });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

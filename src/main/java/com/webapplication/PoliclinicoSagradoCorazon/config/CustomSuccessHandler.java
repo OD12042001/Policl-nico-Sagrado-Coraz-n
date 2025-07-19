@@ -3,6 +3,7 @@ package com.webapplication.PoliclinicoSagradoCorazon.config;
 import java.io.IOException;
 
 import com.webapplication.PoliclinicoSagradoCorazon.dto.AdministradorDTO;
+import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioSeleccionadoDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.PacienteDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.service.AdministradorService;
@@ -39,18 +40,36 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         String rol = authentication.getAuthorities().iterator().next().getAuthority();
         // Según rol, cargar datos y guardar en sesión
         HttpSession session = request.getSession(true);
-        System.out.println("🔐 Login exitoso - Rol: " + rol + ", DNI: " + dni);
+        HorarioSeleccionadoDTO horarioPendiente = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");
+        System.out.println(horarioPendiente);
         switch (rol) {
             case "PACIENTE":
                 PacienteDTO paciente = pacienteService.obtenerPorDni(dni);
                 session.setAttribute("usuarioActual", paciente);
-                System.out.println("👤 Paciente guardado en sesión: " + paciente.getNombre());
-                response.sendRedirect("/portalPaciente");
+                
+                if (horarioPendiente != null) {
+                    // Mover de horarioPendiente a horarioSeleccionado
+                    session.setAttribute("horarioSeleccionado", horarioPendiente);
+                    session.removeAttribute("horarioPendiente");
+                    response.sendRedirect("/registro-cita");
+                } else {
+                    response.sendRedirect("/portalPaciente");
+                }
                 break;
             case "RECEPCIONISTA":
                 RecepcionistaDTO recepcionista = recepcionistaService.obtenerPorDni(dni);
+                if (recepcionista == null) {
+                    response.sendRedirect("/login");
+                }
                 session.setAttribute("usuarioActual", recepcionista);
-                response.sendRedirect("/portalRecepcionista");
+                if (horarioPendiente != null) {
+                    // Mover de horarioPendiente a horarioSeleccionado
+                    session.setAttribute("horarioSeleccionado", horarioPendiente);
+                    session.removeAttribute("horarioPendiente");
+                    response.sendRedirect("/registro-cita");
+                } else {
+                    response.sendRedirect("/portalRecepcionista");
+                }
                 break;
             case "ADMINISTRADOR":
                 AdministradorDTO administrador = administradorService.obtenerPorDni(dni);

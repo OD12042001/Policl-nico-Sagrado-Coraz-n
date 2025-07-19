@@ -4,57 +4,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil del Recepcionista</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Perfil del Paciente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .profile-container {
+            padding: 2rem;
+        }
+
+        .profile-title {
+            color: #0d6efd;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-card-body {
+            padding: 1.5rem;
+        }
+
+        .info-label {
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            color: #333;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 1rem;
+        }
+
+        .btn-edit-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid #0d6efd;
+            color: #0d6efd;
+            transition: all 0.2s;
+        }
+
+        .btn-edit-profile:hover {
+            background-color: #e7f1ff;
+        }
+    </style>
 </head>
 
 <body>
     <div th:fragment="contenido">
-        <div class="content">
-            <h2 class="mb-4">Mi Perfil</h2>
+        <div class="profile-container">
+            <!-- Bienvenida -->
+            <div class="welcome-card mb-4">
+                <!-- Contenido de bienvenida -->
+            </div>
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">Información Personal</div>
-                <div class="card-body">
+            <!-- Resumen -->
+            <div class="card summary-card mb-4">
+                <!-- Contenido de resumen -->
+            </div>
+
+            <!-- Recordatorios -->
+            <div class="card reminders-card mb-4">
+                <!-- Contenido de recordatorios -->
+            </div>
+            
+            <h2 class="profile-title">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </h2>
+
+            <div class="card profile-card">
+                <div class="card-header profile-card-header">
+                    <i class="bi bi-info-circle"></i> Información Personal
+                </div>
+                <div class="card-body profile-card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Nombre:</label>
-                            <p
+                            <div class="info-label">Nombre completo:</div>
+                            <div class="info-value"
                                 th:text="${session.usuarioActual.nombre} + ' ' + ${session.usuarioActual.apellidoPaterno} + ' ' + ${session.usuarioActual.apellidoMaterno}">
-                                Nombre completo</p>
+                                Nombre completo
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">DNI:</label>
-                            <p th:text="${session.usuarioActual.dni}">DNI</p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Fecha de Nacimiento:</label>
-                            <p th:text="${#temporals.format(session.usuarioActual.fechaNacimiento, 'dd/MM/yyyy')}">Fecha
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Sexo:</label>
-                            <p th:text="${session.usuarioActual.sexo}">Sexo</p>
+                            <div class="info-label">DNI:</div>
+                            <div class="info-value" th:text="${session.usuarioActual.dni}">DNI</div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Correo:</label>
-                            <p th:text="${session.usuarioActual.correo}">Correo</p>
+                            <div class="info-label">Fecha de Nacimiento:</div>
+                            <div class="info-value"
+                                th:text="${#temporals.format(session.usuarioActual.fechaNacimiento, 'dd/MM/yyyy')}">
+                                Fecha
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Celular:</label>
-                            <p th:text="${session.usuarioActual.celular}">Celular</p>
+                            <div class="info-label">Sexo:</div>
+                            <div class="info-value" th:text="${session.usuarioActual.sexo}">Sexo</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-label">Correo electrónico:</div>
+                            <div class="info-value" th:text="${session.usuarioActual.correo}">Correo</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-label">Número de celular:</div>
+                            <div class="info-value" th:text="${session.usuarioActual.celular}">Celular</div>
                         </div>
                     </div>
                 </div>
             </div>
+
+                
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

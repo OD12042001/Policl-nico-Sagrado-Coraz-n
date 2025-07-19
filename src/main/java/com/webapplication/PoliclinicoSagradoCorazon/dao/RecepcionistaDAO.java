@@ -16,7 +16,7 @@ public class RecepcionistaDAO {
     private JdbcTemplate jdbc;
 
     public RecepcionistaDTO buscarPorDni(String dni) {
-        String sql = "SELECT * FROM recepcionista WHERE dni = ?";
+        String sql = "SELECT * FROM recepcionista WHERE dni = ? AND estado = 'ACTIVO'";
         List<RecepcionistaDTO> lista = jdbc.query(sql, new Object[] { dni }, (rs, rowNum) -> {
             RecepcionistaDTO dto = new RecepcionistaDTO();
             dto.setId(rs.getInt("id"));
@@ -36,38 +36,39 @@ public class RecepcionistaDAO {
 
     public List<RecepcionistaDTO> obtenerTodos() {
         String sql = """
-                                SELECT p.id,
-                    p.dni,
-                                        p.nombre,
-                                        p.apellido_paterno AS apellidoPaterno,
-                                        p.apellido_materno AS apellidoMaterno,
-                                        p.fecha_nacimiento AS fechaNacimiento,
-                                        p.sexo,
-                                        p.correo,
-                                        p.celular,
-                                        u.contraseña
-                            FROM recepcionista p
-                            JOIN usuario u ON p.usuario_id = u.id
-                            """;
+                            SELECT p.id,
+                p.dni,
+                                    p.nombre,
+                                    p.apellido_paterno AS apellidoPaterno,
+                                    p.apellido_materno AS apellidoMaterno,
+                                    p.fecha_nacimiento AS fechaNacimiento,
+                                    p.sexo,
+                                    p.correo,
+                                    p.celular,
+                                    u.contraseña,
+                                    p.estado
+                        FROM recepcionista p
+                        JOIN usuario u ON p.usuario_id = u.id
+                        """;
         return jdbc.query(sql, new BeanPropertyRowMapper<>(RecepcionistaDTO.class));
     }
 
     public RecepcionistaDTO obtenerPorId(int id) {
         String sql = """
-                                SELECT p.id,
-                    p.dni,
-                                        p.nombre,
-                                        p.apellido_paterno AS apellidoPaterno,
-                                        p.apellido_materno AS apellidoMaterno,
-                                        p.fecha_nacimiento AS fechaNacimiento,
-                                        p.sexo,
-                                        p.correo,
-                                        p.celular,
-                                        u.contraseña
-                            FROM recepcionista p
-                            JOIN usuario u ON p.usuario_id = u.id
-                            WHERE p.id = ?
-                            """;
+                            SELECT p.id,
+                p.dni,
+                                    p.nombre,
+                                    p.apellido_paterno AS apellidoPaterno,
+                                    p.apellido_materno AS apellidoMaterno,
+                                    p.fecha_nacimiento AS fechaNacimiento,
+                                    p.sexo,
+                                    p.correo,
+                                    p.celular,
+                                    u.contraseña
+                        FROM recepcionista p
+                        JOIN usuario u ON p.usuario_id = u.id
+                        WHERE p.id = ?
+                        """;
         return jdbc.queryForObject(sql, new BeanPropertyRowMapper<>(RecepcionistaDTO.class), id);
     }
 
@@ -92,27 +93,31 @@ public class RecepcionistaDAO {
 
     public void insertar(RecepcionistaDTO recepcionista, int usuario_id) {
 
-    String sql = "INSERT INTO recepcionista ( usuario_id, nombre, apellido_paterno, apellido_materno, dni, correo, celular) " +
-                    "VALUES (?,?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO recepcionista ( usuario_id, nombre, apellido_paterno, apellido_materno, dni, correo, celular) "
+                +
+                "VALUES (?,?, ?, ?, ?, ?, ?)";
 
-    jdbc.update(sql,
-        usuario_id,
-        recepcionista.getNombre(),
-        recepcionista.getApellidoPaterno(),
-        recepcionista.getApellidoMaterno(),
-        recepcionista.getDni(),
-        recepcionista.getCorreo(),
-        recepcionista.getCelular()
-    );
-}
+        jdbc.update(sql,
+                usuario_id,
+                recepcionista.getNombre(),
+                recepcionista.getApellidoPaterno(),
+                recepcionista.getApellidoMaterno(),
+                recepcionista.getDni(),
+                recepcionista.getCorreo(),
+                recepcionista.getCelular());
+    }
 
-public void eliminar(String dni){
+    public void activar(String dni) {
 
-    String sql1 = "DELETE FROM recepcionista WHERE dni = ? ";
-    jdbc.update(sql1, dni);
-        String sql = "DELETE FROM usuario WHERE dni = ? AND rol = 'RECEPCIONISTA'";
-    jdbc.update(sql, dni);
+        String sql1 = "UPDATE recepcionista SET estado = 'ACTIVO' WHERE dni = ? ";
+        jdbc.update(sql1, dni);
 
-    
+    }
+
+    public void desactivar(String dni) {
+
+        String sql1 = "UPDATE recepcionista SET estado = 'INACTIVO' WHERE dni = ? ";
+        jdbc.update(sql1, dni);
+
     }
 }

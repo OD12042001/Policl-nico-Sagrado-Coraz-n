@@ -1,64 +1,95 @@
 <div th:fragment="contenido">
-    <div class="container mt-4">
-        <h2>Gestión de Horarios</h2>
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-calendar2-range me-2"></i>Gestión de Horarios</h2>
+            <a th:href="@{/administrador/horario/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>Agregar Horario
+            </a>
+        </div>
 
         <!-- Filtro -->
-        <form method="get" th:action="@{/portalAdministrador}">
-            <input type="hidden" name="contenido" value="administrador-dashboard/horarios" />
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label>Disponibilidad</label>
-                    <select name="disponible" class="form-select">
-                        <option value="">Todos</option>
-                        <option value="SI">Disponibles</option>
-                        <option value="NO">No Disponibles</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label>Fecha</label>
-                    <input type="date" name="fecha" class="form-control" />
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-primary">Filtrar</button>
-                </div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title"><i class="bi bi-funnel me-2"></i>Filtros</h4>
+                <form method="get" th:action="@{/portalAdministrador}">
+                    <input type="hidden" name="contenido" value="administrador-dashboard/horarios" />
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Disponibilidad</label>
+                            <select name="disponible" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="SI" th:selected="${disponible == 'SI'}">Disponibles</option>
+                                <option value="NO" th:selected="${disponible == 'NO'}">No Disponibles</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" name="fecha" class="form-control" th:value="${fecha}" />
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-funnel me-2"></i>Filtrar
+                            </button>
+                            <a th:href="@{/portalAdministrador(contenido='administrador-dashboard/horarios')}" 
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
 
         <!-- Tabla -->
-        <table class="table table-bordered table-striped mt-3">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Doctor</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Disponible</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="horario : ${listaHorarios}">
-                    <td th:text="${horario.horarioID}"></td>
-                    <td th:text="${horario.nombreDoctor}"></td>
-                    <td th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${horario.hora}"></td>
-                    <td th:text="${horario.disponible}"></td>
-                    <td>
-                        <a th:href="@{'/administrador/horario/modificar/' + ${horario.horarioID}}"
-                            class="btn btn-warning btn-sm">Modificar</a>
-                        <a th:href="@{'/administrador/horario/apertura/' + ${horario.horarioID}}"
-                            th:if="${horario.disponible == 'NO'}" class="btn btn-success btn-sm"
-                            onclick="return confirm('¿Deseas habilitar este horario nuevamente?')">Apertura</a>
-
-                        <a th:href="@{'/administrador/horario/cierre/' + ${horario.horarioID}}"
-                            th:if="${horario.disponible == 'SI'}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Deseas deshabilitar este horario?')">Cierre</a>
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <a th:href="@{/administrador/horario/nuevo}" class="btn btn-success mt-3">➕ Agregar Horario</a>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Doctor</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Disponible</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="horario : ${listaHorarios}">
+                                <td th:text="${horario.horarioID}"></td>
+                                <td th:text="${horario.nombreDoctor}"></td>
+                                <td th:text="${#temporals.format(horario.fecha, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${horario.hora}"></td>
+                                <td>
+                                    <span th:if="${horario.disponible == 'SI'}" class="badge bg-success">Disponible</span>
+                                    <span th:if="${horario.disponible == 'NO'}" class="badge bg-secondary">No Disponible</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a th:href="@{'/administrador/horario/modificar/' + ${horario.horarioID}}"
+                                           class="btn btn-sm btn-outline-primary" title="Modificar">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a th:href="@{'/administrador/horario/apertura/' + ${horario.horarioID}}"
+                                           th:if="${horario.disponible == 'NO'}" 
+                                           class="btn btn-sm btn-outline-success" title="Habilitar"
+                                           onclick="return confirm('¿Deseas habilitar este horario?')">
+                                            <i class="bi bi-unlock-fill"></i>
+                                        </a>
+                                        <a th:href="@{'/administrador/horario/cierre/' + ${horario.horarioID}}"
+                                           th:if="${horario.disponible == 'SI'}" 
+                                           class="btn btn-sm btn-outline-danger" title="Deshabilitar"
+                                           onclick="return confirm('¿Deseas deshabilitar este horario?')">
+                                            <i class="bi bi-lock-fill"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

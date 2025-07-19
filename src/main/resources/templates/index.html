@@ -1,72 +1,322 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Policlínico Infantil Nuestra Señora del Sagrado Corazón</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
-            <!-- Logo a la izquierda -->
-            <a class="navbar-brand" th:href="@{/index}">
-                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
-                Policlínico
-            </a>
+    <div class="contenedor-principal">
 
-            <!-- Botón del navbar para móviles -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
-                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
-                <!-- Enlaces al centro -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="nosotros.html">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/horario}">Horario</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contacto.html">Contacto</a>
-                    </li>
-                </ul>
+        <header class="encabezado">
+            <div class="logo">
+                <img th:src="@{/image/LogoEmpresa.png}" alt="Policlínico Infantil Nuestra Señora del Sagrado Corazón" />
             </div>
-
+            <nav class="navegacion-principal">
+                <ul>
+                    <li><a th:href="@{/}">Inicio</a></li>
+                    <li><a th:href="@{/}">Especialidades</a></li>
+                    <li><a th:href="@{/}">Staff Médico</a></li>
+                    <li><a th:href="@{/horario}">Horarios</a></li>
+                </ul>
+            </nav>
             <!-- Si el usuario está logueado -->
-            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
-                        <li>
-                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="acciones-encabezado" th:if="${session.usuarioActual != null}">
+                <a th:href="@{/redireccionPortal}" class="btn btn-outline-success">Mi portal</a>
+                <a th:href="@{/logout}" class="btn btn-outline-danger">Cerrar sesión</a>
             </div>
 
             <!-- Si NO está logueado -->
-            <div class="d-flex" th:if="${session.usuarioActual == null}">
+            <div class="acciones-encabezado" th:if="${session.usuarioActual == null}">
                 <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
             </div>
-        </nav>
-    </header>
+
+        </header>
+
+        <main class="contenido-principal">
+            <section class="seccion-hero">
+                <div class="texto-hero">
+                    <h1>Ahora Puedes Reservar Tu Cita</h1>
+                    <p id="nweb">En Nuestra Página Web</p>
+                    <p id="npro">+40 profesionales listos para ayudarte</p>
+                </div>
+                <aside class="imagen-hero">
+                    <img th:src="@{/image/Medica.png}" alt="Doctora" />
+                </aside>
+            </section>
+
+            <section class="seccion-mision">
+                <div class="logo-mision">
+                    <img th:src="@{/image/LogoEmpresa.png}" alt="Policlínico Infantil Logo" />
+                </div>
+                <div class="texto-mision">
+                    <h2>AFILIACIÓN Y MISIÓN</h2>
+                    <p>
+                        Este policlínico es una obra social de la Diócesis de Chosica,
+                        creada el 13 de agosto de 2002 por el entonces obispo Monseñor
+                        Norberto Strotmann, con el apoyo de la Fundación Infantil "SUMSER"
+                        de Alemania. Su misión es brindar servicios de salud preventiva,
+                        promocional, recuperativa y de rehabilitación especializada,
+                        especialmente a la población de bajos recursos, con calidad y
+                        calidez humana.
+                    </p>
+                    <div class="leer-mas-mision">
+                        <a href="#">Leer más</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="seccion-testimonios">
+                <p id="tes">Testimonios de Pacientes</p>
+                <h2 class="titulo-seccion">Testimonios</h2>
+                <p class="subtitulo-seccion">
+                    Las experiencias de nuestros pacientes son muy elocuentes. Descubra
+                    cómo CareLink les ha brindado atención compasiva y experta y ha
+                    marcado una diferencia en sus vidas.
+                </p>
+                <div class="contenedor-testimonios">
+                    <article class="testimonio">
+                        <div class="info-paciente">
+                            <div class="imagen-paciente">
+                                <img th:src="@{/image/RogerF.png}" alt="Foto de Roger Flores" />
+                            </div>
+                            <div class="detalles-paciente">
+                                <h3 class="nombre-paciente">Roger Flores</h3>
+                                <p class="ubicacion-paciente">New York, NY</p>
+                            </div>
+                        </div>
+                        <blockquote class="cita-paciente">
+                            <p>Buena atención, de precios moderados, ordenado y limpio</p>
+                        </blockquote>
+                        <br /><br /><br />
+                        <div class="calificacion-paciente">
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                        </div>
+                    </article>
+
+                    <article class="testimonio">
+                        <div class="info-paciente">
+                            <div class="imagen-paciente">
+                                <img th:src="@{/image/JuanM.png}" alt="Foto de Juan Mendez" />
+                            </div>
+                            <div class="detalles-paciente">
+                                <h3 class="nombre-paciente">Juan Mendez</h3>
+                                <p class="ubicacion-paciente">Los Angeles, CA</p>
+                            </div>
+                        </div>
+                        <blockquote class="cita-paciente">
+                            <p>
+                                Recomiendo el Policlínico Infantil "Nuestra Señora del Sagrado
+                                Corazón" por su calidad, amabilidad y costos accesibles. ¡Se
+                                preocupan por sus pacientes!
+                            </p>
+                        </blockquote>
+                        <div class="calificacion-paciente">
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">☆</span>
+                        </div>
+                    </article>
+
+                    <article class="testimonio">
+                        <div class="info-paciente">
+                            <div class="imagen-paciente">
+                                <img th:src="@{/image/PuritoP.png}" alt="Foto de Purito per" />
+                            </div>
+                            <div class="detalles-paciente">
+                                <h3 class="nombre-paciente">Purito per</h3>
+                                <p class="ubicacion-paciente">Chicago, IL</p>
+                            </div>
+                        </div>
+                        <blockquote class="cita-paciente">
+                            <p>
+                                Excelente atención y calidez humana en el Policlínico Infantil
+                                "Nuestra Señora del Sagrado Corazón". ¡Muy agradecida por la
+                                atención a mi hijo!
+                            </p>
+                        </blockquote>
+                        <br />
+                        <div class="calificacion-paciente">
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">★</span>
+                            <span class="icono-estrella">☆</span>
+                        </div>
+                    </article>
+                </div>
+                <div class="ver-mas-testimonios">
+                    <a href="#" class="boton-ver-mas">Ver más ...</a>
+                </div>
+            </section>
+
+            <section class="seccion-acerca-de">
+                <div class="imagen-acerca-de">
+                    <img th:src="@{/image/joven.jpg}" alt="Imagen del Policlínico" />
+                    <div class="texto-imagen-acerca-de">Medico Especializado</div>
+                </div>
+                <div class="texto-acerca-de">
+                    <h2>Acerca de</h2>
+                    <p>
+                        El Policlínico Infantil Nuestra Señora del Sagrado Corazón es un
+                        centro de salud dedicado al cuidado y bienestar de los niños.
+                        Ubicado en el distrito de Ate, Lima, nuestro objetivo principal es
+                        brindar atención médica especializada a niños en un ambiente
+                        seguro, acogedor y profesional. Contamos con un equipo de médicos
+                        altamente capacitados y personal comprometido con la salud
+                        infantil, ofreciendo una amplia gama de servicios médicos para
+                        garantizar que cada pequeño reciba la atención que necesita. Nos
+                        enorgullece ser una institución que prioriza la calidad, el trato
+                        humano y la accesibilidad a los servicios de salud. Nuestra
+                        dirección es Esquina de la Av. Alfonso Ugarte con Av. La
+                        Esperanza, Urbanización San Gregorio, distrito de Ate, Lima, Perú,
+                        y nuestros horarios de atención son de lunes a sábado, de 8:00
+                        a.m. a 8:00 p.m. Para más información o para agendar una cita,
+                        puedes contactarnos a nuestros números telefónicos:
+                    </p>
+                    <div class="contacto-info-acerca-de">
+                        <p>(01) 351-6775 / (01) 352-0695.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="modal fade" id="modalIniciarSesion" tabindex="-1" aria-labelledby="modalIniciarSesionLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalIniciarSesionLabel">
+                            Inicia sesión en tu cuenta
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Dentro de tu modal de login en index.html -->
+                        <form th:action="@{/login}" method="post" id="loginForm">
+                            <div id="loginMessage" class="alert d-none" role="alert"></div>
+
+                            <div>
+                                <label for="dni">Ingrese su DNI</label>
+                                <input type="text" class="form-control" id="dni" name="username" />
+                                <!-- El 'name' debe ser 'username' -->
+                            </div>
+                            <div class="mt-3">
+                                <label for="contrasena">Contraseña</label>
+                                <div class="d-flex justify-content-between">
+                                    <input type="password" class="form-control" id="contrasena" name="password"
+                                        placeholder="*********" />
+                                    <button type="button" class="btn btn-link btn-sm">
+                                        ¿Olvidaste tu contraseña?
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">
+                                INICIAR SESIÓN
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.146-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5a.5.5 0 0 1-.5-.5z" />
+                                </svg>
+                            </button>
+                        </form>
+
+
+
+                        <div class="mt-3">
+                            <p class="text-center">
+                                ¿No tienes cuenta?
+                                <a th:href="@{/registro.html}">
+                                    <button type="button" class="btn btn-outline-secondary w-100">
+                                        CREAR CUENTA
+                                    </button>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="pie-pagina">
+            <div class="contenedor-pie">
+                <div class="logo-obispal-columna">
+                    <img th:src="@{/image/LogoObispado.png}" alt="Logo del Obispado" />
+                    <p>Somos Una Gran Familia Brindada</p>
+                    <p>A Tu Servicio</p>
+                </div>
+                <div class="especialidades-columna">
+                    <h3>Especialidades</h3>
+                    <ul>
+                        <li>Pediatría</li>
+                        <li>Medicina General</li>
+                        <li>Odontología</li>
+                        <li>Medicina Interna</li>
+                        <li>Traumatología</li>
+                        <li>Ver Mas</li>
+                    </ul>
+                </div>
+                <div class="staff-medico-columna">
+                    <h3>Staff Médico</h3>
+                    <ul>
+                        <li><a th:href="@{/staff-medico}">Enlace al Staff</a></li>
+                    </ul>
+                </div>
+                <div class="contacto-columna">
+                    <h3>Contacto</h3>
+                    <p>
+                        <img th:src="@{/image/correo1.png}" alt="Email" />
+                        psaludchosica@hotmail.com
+                    </p>
+                    <p>
+                        <img th:src="@{/image/telefono.png}" alt="Teléfono" />
+                        351-6775 / 352-0695
+                    </p>
+                </div>
+            </div>
+            <div class="barra-inferior-pie">
+                <p>
+                    Somos un policlínico dedicado a brindar atención médica integral y
+                    de calidad a nuestra comunidad. Nuestro equipo de profesionales está
+                    comprometido con tu salud y bienestar.
+                </p>
+                <div class="iconos-pago">
+                    <img th:src="@{/image/amex.png}" alt="American Express" />
+                    <img th:src="@{/image/visa.png}" alt="Visa" />
+                    <img th:src="@{/image/mastercard.png}" alt="Mastercard" />
+                    <img th:src="@{/image/paypal.png}" alt="PayPal" />
+                    <img th:src="@{/image/discover.png}" alt="Discover" />
+                </div>
+            </div>
+            <div class="derechos-reservados-pie">
+                <p>
+                    Policlínico Infantil "Nuestra Señora del Sagrado Corazón" - Cuidando
+                    la salud de los niños con calidad y amor.
+                </p>
+            </div>
+        </footer>
+
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <script th:src="@{/js/sidebar.js}"></script>
 </body>
 
 </html>

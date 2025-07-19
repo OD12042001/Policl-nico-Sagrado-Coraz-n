@@ -1,13 +1,238 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-    <div th:fragment="contenido">
-    <h3>Mi pruebaa</h3>
-    <p>Bienvenido a tu perfil. Aquí puedes ver y editar tu información personal.</p>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+            <!-- Logo a la izquierda -->
+            <a class="navbar-brand" th:href="@{/index}">
+                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
+                Policlínico
+            </a>
+
+            <!-- Botón del navbar para móviles -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
+                <!-- Enlaces al centro -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/horario}">Horario</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contacto.html">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Si el usuario está logueado -->
+            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Si NO está logueado -->
+            <div class="d-flex" th:if="${session.usuarioActual == null}">
+                <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container py-4">
+        <div class="row">
+            <!-- Lado Izquierdo: Detalles de la cita -->
+            <div class="col-md-6">
+                <h4>Resumen de la Cita</h4>
+                <p><strong>Doctor:</strong> <span th:text="${horarioSeleccionado.nombre}"></span></p>
+                <p><strong>Especialidad:</strong> <span th:text="${horarioSeleccionado.especialidad}"></span></p>
+                <p><strong>Fecha:</strong> <span th:text="${horarioSeleccionado.fecha}"></span></p>
+                <p><strong>Hora:</strong> <span th:text="${horarioSeleccionado.hora}"></span></p>
+                <p><strong>Precio:</strong> S/. <span th:text="${horarioSeleccionado.precio}"></span></p>
+            </div>
+
+            <!-- Lado Derecho: Métodos de pago -->
+            <div class="col-md-6">
+                <h4>Selecciona método de pago</h4>
+
+                <!-- Solo mostrar para Paciente -->
+                <th:block th:if="${rolUsuario == 'paciente'}">
+                    <div class="mb-4">
+                        <!-- Botones de selección -->
+                        <div class="btn-group mb-3" role="group">
+                            <button type="button" class="btn btn-outline-primary" id="btnTarjeta">Pagar con
+                                Tarjeta</button>
+                            <button type="button" class="btn btn-outline-success" id="btnYape">Pagar con Yape</button>
+                        </div>
+
+                        <!-- Formulario Tarjeta -->
+                        <form method="post" action="/procesar-pago" id="formTarjeta">
+                            <div class="card card-body border-primary">
+                                <h5>Método: Tarjeta</h5>
+                                <input type="text" class="form-control mt-2" placeholder="Número de tarjeta" required>
+                                <input type="text" class="form-control mt-2" placeholder="Titular" required>
+                                <input type="text" class="form-control mt-2" placeholder="CVV" required>
+                                <input type="month" class="form-control mt-2" placeholder="MM/YY" required>
+                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                <input type="hidden" name="metodo" value="TARJETA">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" required>
+                                    <label class="form-check-label">Aceptar términos y condiciones</label>
+                                </div>
+                                <button class="btn btn-primary mt-3">Pagar</button>
+                            </div>
+                        </form>
+
+                        <!-- Formulario Yape (oculto al inicio) -->
+                        <form method="post" action="/procesar-pago" id="formYape" style="display: none;">
+                            <div class="card card-body border-success">
+                                <h5>Método: Yape</h5>
+                                <input type="text" class="form-control mt-2" placeholder="Número de celular Yape" required>
+                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                <input type="hidden" name="metodo" value="YAPE">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" required>
+                                    <label class="form-check-label">Aceptar términos y condiciones</label>
+                                </div>
+                                <button class="btn btn-success mt-3">Pagar</button>
+                            </div>
+                        </form>
+                    </div>
+                </th:block>
+
+                <!-- Para todos (Recepcionista) -->
+                <th:block th:if="${rolUsuario == 'recepcionista'}">
+                    <div class="mb-4">
+                        <!-- Botones para cambiar de método -->
+                        <div class="btn-group mb-3" role="group">
+                            <button type="button" class="btn btn-outline-primary" id="btnTarjetaRec">Tarjeta</button>
+                            <button type="button" class="btn btn-outline-success" id="btnYapeRec">Yape</button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                id="btnEfectivoRec">Efectivo</button>
+                        </div>
+
+                        <!-- Formulario: Tarjeta -->
+                        <form method="post" action="/procesar-pago" id="formTarjetaRec">
+                            <div class="card card-body border-primary">
+                                <h5>Método: Tarjeta</h5>
+                                <input type="text" class="form-control mt-2" placeholder="Número de tarjeta" required>
+                                <input type="text" class="form-control mt-2" placeholder="Titular" required>
+                                <input type="text" class="form-control mt-2" placeholder="CVV" required>
+                                <input type="month" class="form-control mt-2" placeholder="MM/YY" required>
+                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                <input type="hidden" name="metodo" value="TARJETA">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" required>
+                                    <label class="form-check-label">Aceptar términos y condiciones</label>
+                                </div>
+                                <button class="btn btn-primary mt-3">Pagar</button>
+                            </div>
+                        </form>
+
+                        <!-- Formulario: Yape -->
+                        <form method="post" action="/procesar-pago" id="formYapeRec" style="display: none;">
+                            <div class="card card-body border-success">
+                                <h5>Método: Yape</h5>
+                                <input type="text" class="form-control mt-2" placeholder="Número de celular Yape" required>
+                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                <input type="hidden" name="metodo" value="YAPE">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" required>
+                                    <label class="form-check-label">Aceptar términos y condiciones</label>
+                                </div>
+                                <button class="btn btn-success mt-3">Pagar</button>
+                            </div>
+                        </form>
+
+                        <!-- Formulario: Efectivo -->
+                        <form method="post" action="/procesar-pago" id="formEfectivoRec"
+                            style="display: none;">
+                            <div class="card card-body border-secondary">
+                                <h5>Método: Efectivo</h5>
+                                <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
+                                <input type="hidden" name="horario_id" th:value="${horarioSeleccionado.horario_id}">
+                                <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
+                                <input type="hidden" name="metodo" value="EFECTIVO">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" required>
+                                    <label class="form-check-label">Confirmo que el pago se realizará en
+                                        efectivo</label>
+                                </div>
+                                <button class="btn btn-secondary mt-3">Pagar</button>
+                            </div>
+                        </form>
+                    </div>
+                </th:block>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btnTarjeta').addEventListener('click', function () {
+            document.getElementById('formTarjeta').style.display = 'block';
+            document.getElementById('formYape').style.display = 'none';
+        });
+
+        document.getElementById('btnYape').addEventListener('click', function () {
+            document.getElementById('formYape').style.display = 'block';
+            document.getElementById('formTarjeta').style.display = 'none';
+        });
+    </script>
+    <script>
+        document.getElementById('btnTarjetaRec').addEventListener('click', function () {
+            document.getElementById('formTarjetaRec').style.display = 'block';
+            document.getElementById('formYapeRec').style.display = 'none';
+            document.getElementById('formEfectivoRec').style.display = 'none';
+        });
+
+        document.getElementById('btnYapeRec').addEventListener('click', function () {
+            document.getElementById('formYapeRec').style.display = 'block';
+            document.getElementById('formTarjetaRec').style.display = 'none';
+            document.getElementById('formEfectivoRec').style.display = 'none';
+        });
+
+        document.getElementById('btnEfectivoRec').addEventListener('click', function () {
+            document.getElementById('formEfectivoRec').style.display = 'block';
+            document.getElementById('formTarjetaRec').style.display = 'none';
+            document.getElementById('formYapeRec').style.display = 'none';
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

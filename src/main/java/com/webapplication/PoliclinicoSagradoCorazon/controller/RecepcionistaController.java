@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.service.RecepcionistaService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class RecepcionistaController {
@@ -18,16 +21,22 @@ public class RecepcionistaController {
     private RecepcionistaService recepcionistaService;
 
     @GetMapping("/administrador/recepcionista/nuevo")
-    public String nuevoRecepcionista(Model model) {
+    public String nuevoRecepcionista(Model model,HttpSession session) {
         model.addAttribute("recepcionista", new RecepcionistaDTO());
-        return "administrador-dashboard/formularioRecepcionista";
+
+        session.setAttribute("recepcionista1", new RecepcionistaDTO());
+        
+        return "redirect:/portalAdministrador?contenido=administrador-dashboard/formularioRecepcionista";
     }
 
     @GetMapping("/administrador/recepcionista/modificar/{id}")
-    public String modificarRecepcionista(@PathVariable int id, Model model) {
+    public String modificarRecepcionista(@PathVariable int id, Model model,HttpSession session) {
         RecepcionistaDTO recepcionista = recepcionistaService.obtenerPorId(id);
         model.addAttribute("recepcionista", recepcionista);
-        return "administrador-dashboard/formularioRecepcionista";
+        
+        session.setAttribute("recepcionista1", recepcionista);
+
+        return "redirect:/portalAdministrador?contenido=administrador-dashboard/formularioRecepcionista";
     }
 
     @PostMapping("/administrador/recepcionista/guardar")
@@ -41,9 +50,15 @@ public class RecepcionistaController {
         return "redirect:/portalAdministrador?contenido=administrador-dashboard/Recepcionistas";
     }
 
-    @GetMapping("/administrador/recepcionista/eliminar/{dni}")
-    public String eliminarRecepcionista(@PathVariable String dni) {
-        recepcionistaService.eliminar(dni);
+    @GetMapping("/administrador/recepcionista/activar/{dni}")
+    public String activarRecepcionista(@PathVariable String dni) {
+        recepcionistaService.activar(dni);
+        return "redirect:/portalAdministrador?contenido=administrador-dashboard/Recepcionistas";
+    }
+
+    @GetMapping("/administrador/recepcionista/desactivar/{dni}")
+    public String desactivarRecepcionista(@PathVariable String dni) {
+        recepcionistaService.desactivar(dni);
         return "redirect:/portalAdministrador?contenido=administrador-dashboard/Recepcionistas";
     }
 

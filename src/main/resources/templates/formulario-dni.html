@@ -1,94 +1,262 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>Formulario de DNI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Búsqueda de Paciente - Policlínico</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2a7f8d;
+            --secondary-color: #4caf50;
+            --accent-color: #ff7e5f;
+            --light-bg: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand img {
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: #555;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #1a616d);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            padding: 10px 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+        }
+        
+        label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .resumen-cita p {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .resumen-cita p:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .resumen-cita strong {
+            color: var(--primary-color);
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        .form-control {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(42, 127, 141, 0.25);
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+            color: #842029;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 20px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
-
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
-            <!-- Logo a la izquierda -->
-            <a class="navbar-brand" th:href="@{/index}">
-                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
-                Policlínico
-            </a>
+        <nav class="navbar navbar-expand-lg navbar-light px-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/index}">
+                    <img src="logo.png" alt="Logo" width="35" height="35" class="d-inline-block align-text-top" />
+                    Policlínico Salud Integral
+                </a>
 
-            <!-- Botón del navbar para móviles -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
-                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <!-- Contenido del navbar -->
-            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
-                <!-- Enlaces al centro -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="nosotros.html">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/horario}">Horario</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contacto.html">Contacto</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Si el usuario está logueado -->
-            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
-                        <li>
-                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="nosotros.html">
+                                <i class="fas fa-info-circle me-1"></i>Nosotros
+                            </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/horario}">
+                                <i class="far fa-calendar-alt me-1"></i>Horario
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacto.html">
+                                <i class="fas fa-envelope me-1"></i>Contacto
+                            </a>
                         </li>
                     </ul>
                 </div>
-            </div>
 
-            <!-- Si NO está logueado -->
-            <div class="d-flex" th:if="${session.usuarioActual == null}">
-                <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
+                <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span th:text="${session.usuarioActual.nombre}">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/redireccionPortal}">
+                                    <i class="fas fa-user me-2"></i>Mi portal
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="d-flex" th:if="${session.usuarioActual == null}">
+                    <a th:href="@{/login}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                    </a>
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container mt-5">
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mb-4" style="color: var(--primary-color);">
+                    <i class="fas fa-search me-2"></i>Búsqueda de Paciente por DNI
+                </h2>
+                <p class="text-center mb-5">Ingrese el número de documento del paciente para continuar con el proceso de cita</p>
+            </div>
+        </div>
+        
         <div class="row">
-            <!-- Sección izquierda: Datos del paciente -->
+            <!-- Sección izquierda: Búsqueda por DNI -->
             <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        Busqueda del Paciente
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-id-card me-2"></i>Búsqueda del Paciente
                     </div>
                     <div class="card-body">
                         <form method="post" th:action="@{/confirmar-dni}">
-                            <div class="mb-3">
-                                <label class="form-label">DNI</label>
-                                <input type="text" class="form-control" placeholder="DNI" name="dni" />
+                            <div class="mb-4">
+                                <label class="form-label">Número de DNI</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card-alt"></i></span>
+                                    <input type="text" class="form-control" placeholder="Ingrese el DNI del paciente" 
+                                           name="dni" required pattern="[0-9]{8}" 
+                                           title="Por favor ingrese un DNI válido (8 dígitos)" />
+                                </div>
+                                <small class="text-muted">Ingrese los 8 dígitos del DNI sin espacios ni guiones</small>
                             </div>
 
-                            <div th:if="${errorDni}" class="alert alert-danger alert-dismissible fade show"
-                                role="alert">
+                            <div th:if="${errorDni}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
                                 <span th:text="${errorDni}"></span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
 
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-success">
-                                    Confirmar DNI
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-search me-2"></i>Buscar Paciente
                                 </button>
                             </div>
                         </form>
@@ -98,41 +266,41 @@
 
             <!-- Sección derecha: Resumen de la cita -->
             <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-header bg-secondary text-white">
-                        Resumen de la Cita
+                <div class="card">
+                    <div class="card-header">
+                        <i class="far fa-calendar-alt me-2"></i>Resumen de la Cita
                     </div>
-                    <div class="card-body">
+                    <div class="card-body resumen-cita">
                         <p>
-                            <strong>Doctor:</strong>
+                            <strong><i class="fas fa-user-md me-2"></i>Doctor:</strong> 
                             <span th:text="${horarioSeleccionado.nombre}"></span>
                         </p>
                         <p>
-                            <strong>Especialidad:</strong>
+                            <strong><i class="fas fa-stethoscope me-2"></i>Especialidad:</strong> 
                             <span th:text="${horarioSeleccionado.especialidad}"></span>
                         </p>
                         <p>
-                            <strong>CMP:</strong>
+                            <strong><i class="fas fa-id-badge me-2"></i>CMP:</strong> 
                             <span th:text="${horarioSeleccionado.cmp}"></span>
                         </p>
                         <p>
-                            <strong>Fecha:</strong>
-                            <span th:text="${#temporals.format(horarioSeleccionado.fecha, 'dd/MM/yyyy')}"></span>
+                            <strong><i class="far fa-calendar me-2"></i>Fecha:</strong> 
+                            <span th:text="${#temporals.format(horarioSeleccionado.fecha, 'EEEE, dd MMMM yyyy')}"></span>
                         </p>
                         <p>
-                            <strong>Hora:</strong>
+                            <strong><i class="far fa-clock me-2"></i>Hora:</strong> 
                             <span th:text="${horarioSeleccionado.hora}"></span>
                         </p>
                         <p>
-                            <strong>Precio:</strong> S/.
-                            <span th:text="${horarioSeleccionado.precio}"></span>
+                            <strong><i class="fas fa-money-bill-wave me-2"></i>Precio:</strong> 
+                            S/. <span th:text="${horarioSeleccionado.precio}"></span>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

@@ -1,0 +1,581 @@
+/* Variables CSS para colores */
+:root {
+    --primary-blue: #007bff; /* Un azul para botones y enlaces */
+    --light-blue: #e0f2f7; /* Fondo de algunos elementos */
+    --dark-gray: #333;
+    --medium-gray: #666;
+    --light-gray: #eee;
+    --white: #fff;
+    --border-color: #ddd;
+    --green-accent: #28a745; /* Para "Dr. Pérez" */
+    --red-accent: #dc3545; /* Para "Dr. Vargas" */
+    --yellow-accent: #ffc107; /* Para otros doctores */
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: var(--light-gray);
+    display: flex; /* Para centrar el contenedor del dashboard si es necesario */
+    justify-content: center;
+    align-items: flex-start;
+    max-height: 100vh;
+    width: 100%;
+}
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Sidebar fijo de 250px y el resto para el contenido */
+    max-width: 1400px; /* Ancho máximo del dashboard */
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    overflow: hidden; /* Para que el contenido no se desborde del borde redondeado */
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--white);
+    padding: 20px;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--dark-gray);
+}
+
+.sidebar .logo img {
+    border-radius: 50%;
+}
+
+.sidebar .main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.sidebar .main-nav li {
+    margin-bottom: 15px;
+}
+
+.sidebar .main-nav a {
+    text-decoration: none;
+    color: var(--medium-gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .main-nav a:hover,
+.sidebar .main-nav li.active a {
+    background-color: var(--light-blue);
+    color: var(--primary-blue);
+}
+
+.sidebar .main-nav i {
+    font-size: 1.2em; /* Ajusta el tamaño de los iconos */
+}
+
+/* Puedes reemplazar estos iconos con clases de Font Awesome o SVG */
+.icon-inicio::before { content: '🏠'; }
+.icon-citas::before { content: '🗓️'; }
+.icon-medicos::before { content: '👨‍⚕️'; }
+.icon-perfil::before { content: '👤'; }
+.icon-historial::before { content: '📜'; }
+.icon-cerrar-sesion::before { content: '➡️'; }
+.icon-pregunta::before { content: '❓'; }
+.icon-notificaciones::before { content: '🔔'; }
+.icon-ajustes::before { content: '⚙️'; }
+.icon-maletin-medico::before { content: '💼'; font-size: 3em; color: var(--primary-blue); } /* Icono grande */
+.icon-agua::before { content: '💧'; }
+.icon-dormir::before { content: '😴'; }
+.icon-salud::before { content: '🧠'; }
+.icon-chequeo::before { content: '📋'; }
+.icon-alimentos::before { content: '🍎'; }
+.icon-manos::before { content: '✋'; }
+.icon-escuchar::before { content: '👂'; }
+.icon-mover::before { content: '🏃'; }
+.icon-frutas::before { content: '🍓'; }
+.icon-doctor-pequenho::before { content: '🩺'; }
+.icon-pediatria-1::before { content: '👶'; }
+.icon-pediatria-2::before { content: '🧸'; }
+.icon-pediatria-3::before { content: '🍼'; }
+.icon-oftalmologia-1::before { content: '👁️'; }
+.icon-oftalmologia-2::before { content: '👓'; }
+
+
+.sidebar .help-box {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: auto; /* Empuja la caja de ayuda hacia abajo */
+}
+
+.sidebar .help-box i {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.sidebar .help-box button {
+    background-color: var(--white);
+    color: var(--primary-blue);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Contenido Principal */
+.main-content {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+}
+
+.top-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--dark-gray);
+}
+
+.top-header p {
+    color: var(--medium-gray);
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.top-header .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.top-header .user-menu i {
+    font-size: 1.4em;
+    color: var(--medium-gray);
+    cursor: pointer;
+}
+
+.top-header .user-menu img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+/* Sección de Próxima Cita y Bienvenida */
+.next-appointment-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Una columna más ancha para la cita, una más pequeña para bienvenida */
+    gap: 20px;
+    align-items: start;
+}
+
+.appointment-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 25px;
+    display: flex;
+    gap: 25px;
+    box-shadow: var(--shadow);
+}
+
+.appointment-card .icon-wrapper {
+    background-color: var(--light-blue);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px; /* Tamaño del cuadrado del icono */
+    height: 100px;
+    min-width: 100px;
+}
+
+.appointment-card .appointment-details h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: var(--dark-gray);
+}
+
+.appointment-card .appointment-details p {
+    margin: 5px 0;
+    color: var(--medium-gray);
+}
+
+.appointment-card .appointment-details strong {
+    color: var(--dark-gray);
+    font-size: 1.1em;
+}
+
+.appointment-card .actions {
+    margin-top: 15px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    margin-right: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: var(--white);
+    color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+}
+
+.btn-secondary:hover {
+    background-color: var(--light-blue);
+}
+
+.welcome-card {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+.welcome-card h3 {
+    margin-top: 0;
+    font-size: 1.6em;
+}
+
+.welcome-card p {
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.welcome-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* Pequeño redondeo a la imagen */
+}
+
+/* Consejos de Salud */
+.health-tips-section {
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.health-tips-section h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--dark-gray);
+    font-size: 1.4em;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Columnas responsivas */
+    gap: 15px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    font-size: 0.95em;
+    color: var(--medium-gray);
+}
+
+.tip-item i {
+    font-size: 1.5em; /* Tamaño de los iconos de consejos */
+    color: var(--primary-blue); /* Color de los iconos */
+}
+
+/* Próximas Citas Pequeñas */
+.upcoming-appointments {
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    overflow-x: auto; /* Para hacer scroll si hay muchas citas */
+    white-space: nowrap; /* Evita que las tarjetas se envuelvan */
+}
+
+.appointment-scroll-wrapper {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 10px; /* Espacio para la barra de scroll */
+}
+
+.appointment-card-small {
+    min-width: 150px; /* Ancho mínimo para cada tarjeta */
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    flex-shrink: 0; /* Evita que las tarjetas se encojan */
+}
+
+.appointment-card-small p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: var(--medium-gray);
+}
+
+.appointment-card-small i {
+    margin-right: 5px;
+}
+
+.appointment-card-small p:nth-child(3) { /* Estilo para el nombre del doctor */
+    font-weight: bold;
+}
+
+/* Colores específicos para doctores */
+.appointment-card-small:nth-child(1) p:nth-child(3) { color: var(--yellow-accent); }
+.appointment-card-small:nth-child(2) p:nth-child(3) { color: var(--red-accent); }
+.appointment-card-small:nth-child(3) p:nth-child(3) { color: var(--green-accent); }
+.appointment-card-small:nth-child(4) p:nth-child(3) { color: var(--primary-blue); }
+
+
+.appointment-card-small.active-appointment {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue);
+}
+
+.appointment-card-small.active-appointment p {
+    color: var(--white);
+}
+.appointment-card-small.active-appointment p:nth-child(3) {
+    color: var(--white); /* El nombre del doctor también blanco en la activa */
+}
+
+
+/* Especialidades Populares */
+.popular-specialties {
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column; /* Cambia a columna para facilitar "Ver Todas" */
+}
+
+.popular-specialties h2 {
+    margin-top: 0;
+    font-size: 1.4em;
+    color: var(--dark-gray);
+}
+
+.popular-specialties a {
+    align-self: flex-end; /* Alinea el enlace "Ver Todas" a la derecha */
+    text-decoration: none;
+    color: var(--primary-blue);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.specialties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.specialty-card {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.specialty-card .icons-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.specialty-card .icons-wrapper i {
+    font-size: 1.8em;
+    color: var(--primary-blue);
+}
+
+.specialty-card h4 {
+    margin: 10px 0 5px;
+    color: var(--dark-gray);
+}
+
+.specialty-card p {
+    font-size: 0.85em;
+    color: var(--medium-gray);
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: 1fr; /* La barra lateral se convierte en fila superior o se oculta */
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        flex-direction: row; /* Elementos de la sidebar en fila */
+        justify-content: space-around;
+        padding: 15px;
+        flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    }
+
+    .sidebar .logo,
+    .sidebar .help-box {
+        display: none; /* Oculta el logo y la caja de ayuda en pantallas pequeñas */
+    }
+
+    .sidebar .main-nav ul {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    .sidebar .main-nav li {
+        margin-bottom: 0;
+    }
+
+    .sidebar .main-nav a {
+        padding: 8px 10px;
+        flex-direction: column; /* Icono arriba, texto abajo */
+        font-size: 0.8em;
+        gap: 5px;
+    }
+
+    .next-appointment-section {
+        grid-template-columns: 1fr; /* Las secciones se apilan */
+    }
+
+    .health-tips-section .tips-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .specialties-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .top-header .user-menu {
+        align-self: flex-end; /* Mueve el menú de usuario a la derecha */
+    }
+
+    .appointment-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .appointment-card .icon-wrapper {
+        margin-bottom: 15px;
+    }
+
+    .appointment-card .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .tips-grid {
+        grid-template-columns: 1fr; /* Una columna por fila */
+    }
+
+    .tip-item {
+        justify-content: flex-start;
+    }
+
+    .upcoming-appointments .appointment-scroll-wrapper {
+        justify-content: flex-start; /* Alinea a la izquierda en pantallas pequeñas */
+    }
+
+    .popular-specialties {
+        align-items: center; /* Centra el título y el enlace */
+    }
+    .popular-specialties a {
+        align-self: center;
+    }
+    .specialties-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar .main-nav a {
+        padding: 5px 8px;
+        font-size: 0.7em;
+    }
+    .top-header h1 {
+        font-size: 1.5em;
+    }
+    .welcome-card h3 {
+        font-size: 1.4em;
+    }
+}

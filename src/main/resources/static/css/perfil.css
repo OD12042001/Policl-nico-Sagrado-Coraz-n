@@ -1,0 +1,153 @@
+/* perfil.css */
+
+/* Estilos para la tarjeta de perfil */
+
+
+.profile-header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee; /* Separador sutil */
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff; /* Borde azul alrededor de la imagen */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+.profile-header-info h3 {
+  font-size: 1.6em;
+  color: #343a40;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.profile-header-info p {
+  font-size: 1em;
+  color: #6c757d;
+  margin: 0;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espacio entre grupos de formulario */
+}
+
+.profile-details h3 {
+  font-size: 1.4em;
+  color: #343a40;
+  margin-bottom: 15px;
+  font-weight: 500;
+  border-bottom: 1px solid #eee; /* Separador */
+  padding-bottom: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.9em;
+  color: #495057;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.read-only-field {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  background-color: #f8f9fa; /* Fondo gris claro para campos de solo lectura */
+  color: #495057;
+  font-size: 1em;
+  cursor: default; /* Indicador de que no es editable */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
+  outline: none; /* Elimina el contorno al enfocar */
+}
+
+/* Estilos específicos para Datos de Contacto */
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px; /* Espacio con la sección anterior */
+}
+
+.contact-details h3 {
+  font-size: 1.4em;
+  color: #343a40;
+  margin-bottom: 15px;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el ícono y el texto */
+  color: #495057;
+  font-size: 1em;
+}
+
+.contact-item .icon {
+  color: #007bff; /* Ícono azul */
+  font-size: 1.2em;
+}
+
+.contact-item span {
+  flex-grow: 1; /* Permite que el texto ocupe el espacio restante */
+}
+
+.contact-item .edit-icon {
+  color: #6c757d; /* Color del lápiz */
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: color 0.3s ease;
+}
+
+.contact-item .edit-icon:hover {
+  color: #007bff;
+}
+
+/* Media Queries específicas para la tarjeta de perfil */
+@media (max-width: 992px) {
+  .profile-card {
+    margin: 20px; /* Reduce el margen lateral en móviles */
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header-info h3 {
+    font-size: 1.4em;
+  }
+
+  .profile-details h3,
+  .contact-details h3 {
+    font-size: 1.2em;
+  }
+
+  .form-group label,
+  .read-only-field,
+  .contact-item {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-card {
+    margin: 15px; /* Más estrecho en móviles */
+    padding: 15px;
+  }
+}

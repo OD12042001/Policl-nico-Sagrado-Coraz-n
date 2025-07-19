@@ -54,12 +54,24 @@ public class CitaService {
         return citaDAO.obtenerCitasProgramadasPorPaciente(pacienteId);
     }
 
+    public List<CitaDetalleDTO> obtenerCitasCanceladasPorPaciente(int pacienteId) {
+        return citaDAO.obtenerCitasCanceladasPorPaciente(pacienteId);
+    }
+
+    public List<CitaDetalleDTO> obtenerCitasProgramadasPorPacienteYFecha(int pacienteId, LocalDate fecha) {
+        return citaDAO.obtenerCitasProgramadasPorPacienteYFecha(pacienteId, fecha);
+    }
+
     public List<CitaDetalleDTO> obtenerCitasProgramadasTotales() {
         return citaDAO.obtenerCitasProgramadasTotales();
     }
 
     public List<CitaDetalleDTO> obtenerCitasAtendidasPorPaciente(int pacienteId) {
         return citaDAO.obtenerCitasAtendidasPorPaciente(pacienteId);
+    }
+
+    public List<CitaDetalleDTO> obtenerCitasAtendidasPorPacienteYFecha(int pacienteId,LocalDate fecha) {
+        return citaDAO.obtenerCitasAtendidasPorPacienteYFecha(pacienteId,fecha);
     }
 
     public List<CitaDetalleDTO> obtenerCitasAtendidasTotales() {
@@ -71,33 +83,7 @@ public class CitaService {
     }
 
     public void cancelarCitaInteligente(int citaId) {
-        // 1. Obtener la cita
-        Cita cita = citaDAO.obtenerPorId(citaId);
-        if (cita == null)
-            return;
-
-        // 2. Obtener el horario relacionado
-        Horario horario = horarioDAO.obtenerPorId(cita.getHorario_id());
-
-        if (horario != null) {
-            LocalDate fechaCita = horario.getFecha();
-            LocalTime horaCita = horario.getHora();
-
-            // 3. Comparar con fecha y hora actual
-            LocalDate hoy = LocalDate.now();
-            LocalTime ahora = LocalTime.now();
-
-            boolean aunNoHaPasado = fechaCita.isAfter(hoy) ||
-                    (fechaCita.isEqual(hoy) && horaCita.isAfter(ahora));
-
-            // 4. Si la cita aún no pasó, marcamos el horario como disponible
-            if (aunNoHaPasado) {
-                horarioDAO.actualizarDisponibilidad(horario.getId(), "SI");
-            }
-        }
-
-        // 5. Eliminar la cita
-        citaDAO.eliminarPorId(citaId);
+        citaDAO.cancelarCita(citaId);
     }
 
     public Cita obtenerPorId(int citaId) {
@@ -116,12 +102,20 @@ public class CitaService {
         horarioDAO.actualizarDisponibilidadPorCitaId(citaId, "SI");
     }
 
-    public List<CitaDetalleDTO> buscarCitasProgramadasPorFiltros(String especialidad, LocalDate fecha) {
-        return citaDAO.buscarCitasProgramadasPorFiltros(especialidad, fecha);
+    public List<CitaDetalleDTO> buscarCitasProgramadasPorFiltros(String dni,String especialidad, LocalDate fecha) {
+        return citaDAO.buscarCitasProgramadasPorFiltros(dni,especialidad, fecha);
+    }
+
+    public List<CitaDetalleDTO> buscarCitasHistorialPorFiltros(String dni,String especialidad, LocalDate fecha) {
+        return citaDAO.buscarCitasHistorialPorFiltros(dni,especialidad, fecha);
     }
 
     public List<String> obtenerEspecialidadesProgramadas() {
         return citaDAO.obtenerEspecialidadesProgramadas();
+    }
+
+    public List<String> obtenerEspecialidadesHistorial() {
+        return citaDAO.obtenerEspecialidadesHistorial();
     }
 
 }

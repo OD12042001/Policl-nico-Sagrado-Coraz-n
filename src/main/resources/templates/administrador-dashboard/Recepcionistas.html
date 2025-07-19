@@ -1,35 +1,108 @@
 <div th:fragment="contenido">
-    <div class="container mt-4">
-        <h2>Gestión de Recepcionistas</h2>
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">
+                <i class="bi bi-person-badge me-2"></i>Gestión de Recepcionistas
+            </h2>
+            <a th:href="@{/administrador/recepcionista/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>Agregar Recepcionista
+            </a>
+        </div>
 
-        <a th:href="@{/administrador/recepcionista/nuevo}" class="btn btn-success mb-3">➕ Agregar Recepcionista</a>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>DNI</th>
+                                <th>Correo</th>
+                                <th>Celular</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${listaRecepcionistas}">
+                                <td th:text="${r.id}"></td>
+                                <td th:text="${r.nombre} + ' ' + ${r.apellidoPaterno} + ' ' + ${r.apellidoMaterno}">
+                                </td>
+                                <td th:text="${r.dni}"></td>
+                                <td th:text="${r.correo}"></td>
+                                <td th:text="${r.celular}"></td>
+                                <td>
+                                    <th:block
+                                        th:with="estadoTexto=${r.estado != null ? r.estado.toString() : 'INACTIVO'}">
+                                        <span
+                                            th:classappend="${estadoTexto == 'ACTIVO'} ? 'badge bg-success' : 'badge bg-secondary'"
+                                            th:text="${estadoTexto}">
+                                        </span>
+                                    </th:block>
+                                </td>
 
-        <table class="table table-bordered table-striped">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>DNI</th>
-                    <th>Correo</th>
-                    <th>Celular</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="r : ${listaRecepcionistas}">
-                    <td th:text="${r.id}"></td>
-                    <td th:text="${r.nombre} + ' ' + ${r.apellidoPaterno} + ' ' + ${r.apellidoMaterno}"></td>
-                    <td th:text="${r.dni}"></td>
-                    <td th:text="${r.correo}"></td>
-                    <td th:text="${r.celular}"></td>
-                    <td>
-                        <a th:href="@{'/administrador/recepcionista/modificar/' + ${r.id}}"
-                            class="btn btn-warning btn-sm">✏️</a>
-                        <a th:href="@{'/administrador/recepcionista/eliminar/' + ${r.dni}}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Seguro que deseas eliminar este recepcionista?');">🗑️</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a th:href="@{'/administrador/recepcionista/modificar/' + ${r.id}}"
+                                            class="btn btn-sm btn-outline-primary" title="Modificar">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+
+                                        <th:block
+                                            th:with="estadoTexto=${r.estado != null ? r.estado.toString() : 'INACTIVO'}">
+                                            <a th:href="@{'/administrador/recepcionista/desactivar/' + ${r.dni}}"
+                                                class="btn btn-sm btn-outline-warning" title="Desactivar"
+                                                th:if="${estadoTexto == 'ACTIVO'}"
+                                                onclick="return confirm('¿Seguro que deseas desactivar este recepcionista?');">
+                                                <i class="bi bi-slash-circle"></i>
+                                            </a>
+
+                                            <a th:href="@{'/administrador/recepcionista/activar/' + ${r.dni}}"
+                                                class="btn btn-sm btn-outline-success" title="Activar"
+                                                th:if="${estadoTexto == 'INACTIVO'}"
+                                                onclick="return confirm('¿Seguro que deseas activar este recepcionista?');">
+                                                <i class="bi bi-check-circle"></i>
+                                            </a>
+                                        </th:block>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --primary-color: #3d4e61;
+        --secondary-color: #4a5c72;
+        --content-bg: #ffffff;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .content {
+        background-color: var(--content-bg);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        margin: 20px;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(61, 78, 97, 0.05);
+    }
+</style>

@@ -34,7 +34,7 @@ public class SeguridadConfig {
 public SecurityFilterChain filtro(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/login","/horario","/validarDni", "/procesarLogin", "/css/**", "/js/**", "/index").permitAll()
+            .requestMatchers("/", "/login","/horario","/validarDni", "/procesarLogin", "/image/**", "/css/**", "/js/**", "/webjars/**", "/index","/registro-cita","/guardarHorarioSeleccionado").permitAll()
             .requestMatchers(HttpMethod.POST, "/registrarPaciente").permitAll()
             .requestMatchers("/portalPaciente").hasAuthority("PACIENTE")
             .requestMatchers("/portalRecepcionista","/formulario-dni").hasAuthority("RECEPCIONISTA")
@@ -50,7 +50,7 @@ public SecurityFilterChain filtro(HttpSecurity http) throws Exception {
         )
         .logout(logout -> logout
             .logoutUrl("/logout")
-            .logoutSuccessUrl("/login?logout")
+            .logoutSuccessUrl("/")
             .invalidateHttpSession(true) // <- Esto invalida la sesión
             .deleteCookies("JSESSIONID") // <- Esto elimina la cookie de sesión
             .permitAll()

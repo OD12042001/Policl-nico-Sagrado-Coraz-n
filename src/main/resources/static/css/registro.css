@@ -1,0 +1,507 @@
+/* Restablecimiento universal para asegurar un modelo de caja consistente */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Generales y Estructura Principal */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* Mantenemos 'hidden' para el diseño de escritorio (pantallas grandes) */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5; /* Color de fondo general de la página */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contenedor principal de dos columnas */
+.main-container {
+    display: flex;
+    width: 100%; /* Ocupa el 100% del ancho del viewport por defecto */
+    max-width: 1400px; /* Limita el ancho máximo para pantallas muy grandes */
+    height: 100vh; /* Ocupa el 100% de la altura del viewport */
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombra para darle un aspecto de "tarjeta" si no es pantalla completa */
+    border-radius: 10px; /* Bordes redondeados para el contenedor principal */
+    overflow: hidden; /* Mantenemos 'hidden' para el diseño de escritorio */
+}
+
+/* Panel Izquierdo */
+.left-panel {
+    flex: 1; /* Ocupa el 50% del ancho disponible */
+    background-color: #2f75ae; /* El color azul sólido del panel izquierdo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 50vh; /* Ancho mínimo para el panel izquierdo en pantallas grandes, para que no se comprima demasiado */
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+       
+}
+
+/* Contenedor interno para el contenido del panel izquierdo */
+.left-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    width: 80%;
+    max-width: 400px;
+    height: 100%;
+    justify-content: space-between;
+    padding: 50px 20px;
+    box-sizing: border-box;
+}
+
+/* Sección del logo y nombre del policlínico */
+.logo-section {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
+
+.policlinico-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.logo-section h1 {
+    color: #ffffff;
+    font-size: 2.2em;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Contenedor de la imagen de la chica/doctor */
+.girl-image-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+}
+
+.girl-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+/* Panel Derecho (Formulario) */
+.right-panel {
+    height: 100%;
+    flex: 1; /* Ocupa el 50% restante del ancho disponible */
+    padding: 30px 40px; /* **AJUSTADO: Aumentado el padding para que el contenido no esté tan pegado. Elimina el margin-top.** */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-y: auto; /* Permite desplazamiento si el formulario es muy largo */
+    min-width: 400px; /* Ancho mínimo para el panel derecho */
+    box-sizing: border-box;
+    /* margin-top: 90px; <- ELIMINADO: Esta era la causa de la banda blanca superior */
+}
+
+/* Flecha "Atrás" */
+.back-link {
+    position: absolute;
+    top: 30px; /* **AJUSTADO: Posición más adecuada, relativa al top del panel, no al margen.** */
+    left: 40px;
+    z-index: 10;
+}
+
+.back-arrow {
+    color: #555;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s ease;
+}
+
+.back-arrow:hover {
+    color: #005B94;
+}
+
+/* Contenedor del formulario */
+.form-wrapper {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto; /* **AJUSTADO: Usar margin: 0 auto para centrar horizontalmente y no agregar margen superior/inferior no deseado.** */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    /* min-height: ; <- CORREGIDO: Eliminar el valor vacío */
+}
+
+/* Encabezado "Regístrate" */
+.header h3 {
+    text-align: left;
+    margin-bottom: 30px;
+    color: #005B94;
+    font-size: 2em;
+    font-weight: 700;
+}
+
+/* Resto del CSS de los formularios, campos, botones, etc., se mantiene igual */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 0.95em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1em;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #005B94;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 91, 148, 0.25);
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #005B94;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input {
+    border: none;
+    flex-grow: 1;
+    padding: 12px 15px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+}
+
+.input-group:focus-within {
+    border-color: #005B94;
+    box-shadow: 0 0 0 3px rgba(0, 91, 148, 0.25);
+}
+
+.toggle-password {
+    background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.toggle-password:hover {
+    background-color: #e9ecef;
+}
+
+.toggle-password img {
+    width: 20px;
+    height: 20px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.form-check input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #005B94;
+    flex-shrink: 0;
+}
+
+.form-check label {
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 0.95em;
+    color: #444;
+}
+
+.form-check label a {
+    color: #005B94;
+    text-decoration: none;
+    transition: text-decoration 0.3s ease;
+}
+
+.form-check label a:hover {
+    text-decoration: underline;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #005B94;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    background-color: #004470;
+    transform: translateY(-2px);
+}
+
+/* --- MEDIA QUERIES PARA ADAPTARSE A DIFERENTES TAMAÑOS DE PANTALLA --- */
+
+/* Para pantallas muy grandes (mayor a 1400px) */
+@media (min-width: 1401px) {
+    .main-container {
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        margin: auto; /* Centra el contenedor principal */
+    }
+}
+
+/* Para pantallas de tamaño mediano-grande (ej. entre 992px y 1400px) */
+@media (max-width: 1400px) {
+    .main-container {
+        border-radius: 0;
+        box-shadow: none;
+        max-width: 100%;
+    }
+
+    .left-panel {
+        min-width: 380px;
+        flex: 0.9;
+    }
+
+    .left-content {
+        max-width: 380px;
+        padding: 40px 15px;
+    }
+
+    .policlinico-logo {
+        width: 110px;
+    }
+
+    .logo-section h1 {
+        font-size: 2em;
+    }
+
+    .right-panel {
+        min-width: 380px;
+        padding: 25px 35px; /* Ajusta el padding para este breakpoint */
+    }
+
+    .form-wrapper {
+        max-width: 480px;
+    }
+
+    .header h3 {
+        font-size: 1.9em;
+    }
+}
+
+/* Para pantallas de tamaño mediano (ej. laptops de 13-14 pulgadas, entre 801px y 991px) */
+@media (max-width: 991px) { /* Cambiado de 1200px a 991px para que sea más efectivo en 14 pulgadas */
+    .left-panel {
+        min-width: 300px;
+        flex: 0.7; /* El panel izquierdo se hace más estrecho */
+    }
+
+    .left-content {
+        max-width: 300px;
+        padding: 30px 10px;
+    }
+
+    .policlinico-logo {
+        width: 80px;
+    }
+
+    .logo-section h1 {
+        font-size: 1.5em;
+    }
+
+    .girl-image {
+        max-height: 65%;
+    }
+
+    .right-panel {
+        min-width: 320px;
+        padding: 20px 25px; /* Ajusta el padding para este breakpoint */
+    }
+
+    .form-wrapper {
+        max-width: 380px; /* Reduce aún más el ancho máximo del formulario */
+    }
+
+    .header h3 {
+        font-size: 1.6em;
+    }
+
+    .form-group label {
+        font-size: 0.88em;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="date"],
+    .form-group input[type="password"],
+    .form-group select {
+        padding: 9px 10px;
+        font-size: 0.9em;
+    }
+
+    .toggle-password img {
+        width: 16px;
+        height: 16px;
+    }
+    .submit-button {
+        padding: 12px;
+        font-size: 1em;
+    }
+}
+
+
+/* Tus estilos para móviles (max-width: 800px) */
+@media (max-width: 800px) {
+    html, body {
+        height: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .main-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .left-panel {
+        display: none !important;
+    }
+
+    .right-panel {
+        width: 100vw;
+        flex: none;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        padding: 30px 25px;
+        padding-top: 60px;
+        box-sizing: border-box;
+        padding-bottom: 30px;
+        min-width: unset;
+    }
+
+    .form-wrapper {
+        max-width: 100%;
+        margin: 0 auto;
+        justify-content: flex-start;
+        height: auto;
+        flex-grow: 0;
+    }
+
+    .back-link {
+        top: 20px;
+        left: 25px;
+    }
+
+    .header h3 {
+        font-size: 1.8em;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .form-row .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .right-panel {
+        padding: 25px 15px;
+        padding-top: 50px;
+        padding-bottom: 25px;
+    }
+    .back-link {
+        left: 15px;
+    }
+}

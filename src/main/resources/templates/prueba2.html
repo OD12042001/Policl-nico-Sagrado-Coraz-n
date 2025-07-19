@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <title>Document</title>
+    <style>
+        .divisor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .caja1 {
+            flex: 1 1 300px;
+            min-width: 300px;
+            max-width: 45%;
+        }
+
+        .caja2 {
+            flex: 1 1 400px;
+            min-width: 300px;
+        }
+
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .form-control,
+        .form-select,
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .input-group-text {
+            border-radius: 20px 0 0 20px !important;
+        }
+
+        /* Estilo para la barra de desplazamiento */
+        .overflow-auto::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .overflow-auto::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .overflow-auto::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .overflow-auto::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Efecto hover para botones de hora */
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 1.2rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 10px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #2a7fba;
+            border-color: #2a7fba;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+            <!-- Logo a la izquierda -->
+            <a class="navbar-brand" th:href="@{/index}">
+                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
+                Policlínico
+            </a>
+
+            <!-- Botón del navbar para móviles -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Contenido del navbar -->
+            <div class="collapse navbar-collapse justify-content-center" id="navbarContenido">
+                <!-- Enlaces al centro -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/horario}">Horario</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contacto.html">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Si el usuario está logueado -->
+            <div class="d-flex align-items-center" th:if="${session.usuarioActual != null}">
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="usuarioDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="${session.usuarioActual.nombre}">Usuario</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/redireccionPortal}">Mi portal</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Si NO está logueado -->
+            <div class="d-flex" th:if="${session.usuarioActual == null}">
+                <a th:href="@{/login}" class="btn btn-outline-primary">Iniciar Sesión</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container mt-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Reserva tu cita médica</h3>
+            </div>
+            <div class="card-body">
+                <!-- Primera fila: Especialidad -->
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-4">
+                        <h5 class="mb-0 text-secondary">Especialidad médica</h5>
+                    </div>
+                    <div class="col-md-8">
+                        <form th:action="@{/horario}" method="get" class="d-flex">
+                            <select class="form-select form-select-lg" name="especialidad" style="border-radius: 20px;">
+                                <option value="">Todas las especialidades</option>
+                                <option th:each="esp : ${especialidades}" th:value="${esp.nombre}"
+                                    th:text="${esp.nombre}" th:selected="${param.especialidad == esp.nombre}">
+                                </option>
+                            </select>
+                            <button class="btn btn-primary ms-2" type="submit" style="border-radius: 20px;">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Segunda fila: Filtros adicionales -->
+                <form th:action="@{/horario}" method="get" class="mt-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fecha" class="form-label text-secondary">Buscar por fecha</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-calendar"></i></span>
+                                <input type="date" class="form-control" id="fecha" name="fecha"
+                                    th:value="${param.fecha}" style="border-radius: 20px;">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label text-secondary">Buscar por nombre de doctor</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input type="search" class="form-control" id="nombre" name="nombre"
+                                    th:value="${param.nombre}" placeholder="Nombre del doctor"
+                                    style="border-radius: 20px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos ocultos para mantener la especialidad seleccionada -->
+                    <input type="hidden" name="especialidad" th:value="${param.especialidad}">
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                        <button type="submit" class="btn btn-primary px-4" style="border-radius: 20px;">
+                            <i class="bi bi-funnel"></i> Aplicar filtros
+                        </button>
+                        <a th:href="@{/horario}" class="btn btn-outline-secondary px-4" style="border-radius: 20px;">
+                            <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <section class="container py-4">
+        <div th:if="${doctores != null}">
+            <div th:each="doc : ${doctores}" class="mb-5 border rounded p-3 shadow-sm divisor">
+                <div class="d-flex flex-wrap align-items-center caja1">
+                    <div class="me-3">
+                        <img th:src="@{|/image/${doc.imagen}|}" alt="Foto doctor" class="img-fluid rounded" width="150">
+                    </div>
+                    <div>
+                        <h3 th:text="${doc.especialidad}"></h3>
+                        <h2 th:text="${doc.nombre}"></h2>
+                        <p class="text-muted">CMP <span th:text="${doc.cmp}"></span></p>
+                        <a href="#" class="btn btn-link p-0">Ver perfil</a>
+                    </div>
+                </div>
+
+                <div class="mt-4 caja2">
+                    <div th:each="entry : ${doc.horariosPorFecha}">
+                        <h5>📅 <span th:text="${entry.key}"></span></h5>
+                        <div class="row g-2">
+                            <div class="col-4 col-md-2" th:each="hor : ${entry.value}">
+                                <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                                    data-bs-target="#detalleModal" th:data-id="${hor.id}" th:data-doctor="${doc.nombre}"
+                                    th:data-cmp="${doc.cmp}" th:data-especialidad="${doc.especialidad}"
+                                    th:data-precio="${doc.precio}" th:data-fecha="${entry.key}"
+                                    th:data-hora="${hor.hora}">
+                                    <span th:text="${hor.hora}"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Confirmación de Cita -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 12px; overflow: hidden;">
+                <!-- Encabezado del Modal -->
+                <div class="modal-header bg-light">
+                    <div class="w-100 text-center">
+                        <h5 class="modal-title fw-bold" id="detalleModalLabel">Atención de pacientes mayores de 14 años
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <!-- Cuerpo del Modal -->
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <p class="mb-0">¿Deseas continuar con el agendamiento?</p>
+                    </div>
+
+                    <!-- Información de la cita -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">Médico</div>
+                                <div class="col-8 fw-bold" id="modalDoctor"></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">Sede</div>
+                                <div class="col-8" id="modalSede">Lima Centro</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">Especialidad</div>
+                                <div class="col-8" id="modalEspecialidad"></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4 text-muted">Fecha y Hora</div>
+                                <div class="col-8">
+                                    <span id="modalFecha"></span> |
+                                    <span id="modalHora"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-muted">Tipo de consulta</div>
+                                <div class="col-8" id="modalTipoConsulta">Presencial</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Precio (opcional) -->
+                    <div class="text-end mb-3">
+                        <span class="text-muted">Precio:</span>
+                        <span class="fw-bold text-primary fs-5 ms-2">S/. <span id="modalPrecio"></span></span>
+                    </div>
+                </div>
+
+                <!-- Pie del Modal -->
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <form method="post" action="/guardarHorarioSeleccionado" class="mb-0">
+                        <input type="hidden" name="horario_id" id="formHorarioId">
+                        <input type="hidden" name="nombre" id="formNombre">
+                        <input type="hidden" name="cmp" id="formCmp">
+                        <input type="hidden" name="especialidad" id="formEspecialidad">
+                        <input type="hidden" name="precio" id="formPrecio">
+                        <input type="hidden" name="fecha" id="formFecha">
+                        <input type="hidden" name="hora" id="formHora">
+                        <button type="submit" class="btn btn-primary px-4">
+                            Continuar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const detalleModal = document.getElementById('detalleModal');
+
+        detalleModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            // Obtener datos de los atributos
+            const horarioId = button.getAttribute('data-id');
+            const doctor = button.getAttribute('data-doctor');
+            const especialidad = button.getAttribute('data-especialidad');
+            const cmp = button.getAttribute('data-cmp');
+            const precio = button.getAttribute('data-precio');
+            const fecha = button.getAttribute('data-fecha');
+            const hora = button.getAttribute('data-hora');
+
+            // Mostrar en el modal (versión nueva)
+            document.getElementById('modalDoctor').textContent = doctor;
+            document.getElementById('modalEspecialidad').textContent = especialidad;
+            document.getElementById('modalFecha').textContent = fecha;
+
+            // Formatear hora a AM/PM (ej: "13:00" → "01:00 p.m.")
+            const horaFormateada = formatHoraAMPM(hora);
+            document.getElementById('modalHora').textContent = horaFormateada;
+
+            // Mostrar precio (si lo deseas)
+            document.getElementById('modalPrecio').textContent = precio;
+
+            // Llenar los inputs ocultos (manteniendo tu lógica original)
+            document.getElementById('formHorarioId').value = horarioId;
+            document.getElementById('formNombre').value = doctor;
+            document.getElementById('formCmp').value = cmp;
+            document.getElementById('formEspecialidad').value = especialidad;
+            document.getElementById('formPrecio').value = precio;
+
+            // Conversión de fecha (manteniendo tu formato original)
+            const partesFecha = fecha.split("/");
+            const fechaISO = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
+            document.getElementById('formFecha').value = fechaISO;
+
+            document.getElementById('formHora').value = hora;
+        });
+
+        // Función para formatear hora a AM/PM (nueva funcionalidad)
+        function formatHoraAMPM(hora) {
+            if (!hora) return '';
+
+            const [hours, minutes] = hora.split(':');
+            const period = hours >= 12 ? 'p.m.' : 'a.m.';
+            const hours12 = hours % 12 || 12; // Convierte 0 a 12 para medianoche
+            return `${hours12}:${minutes} ${period}`;
+        }
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

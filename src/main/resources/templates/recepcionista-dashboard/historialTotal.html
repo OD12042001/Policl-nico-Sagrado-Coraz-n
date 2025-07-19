@@ -2,46 +2,132 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>Historial de Citas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .card-header-historial {
+            background-color: #6c757d;
+            color: white;
+            font-weight: 500;
+        }
+        .badge-atendida {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-cancelada {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-reprogramar {
+            color: #fff;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-reprogramar:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+    </style>
 </head>
 
 <body>
     <div th:fragment="contenido">
-        <div class="container mt-4">
-            <h2 class="mb-4">Historial de Citas Medicas</h2>
-
-            <div th:if="${#lists.isEmpty(listaCitas)}" class="alert alert-info">
-                No hay citas Atendidas.
+        <div class="container py-4">
+            <!-- Filtros -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="bi bi-funnel"></i> Filtros de Historial</h4>
+                    <form method="get" th:action="@{/portalRecepcionista}">
+                        <input type="hidden" name="contenido" value="recepcionista-dashboard/historialTotal">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">DNI Paciente</label>
+                                <input type="text" class="form-control" name="dni" th:value="${dniFiltro}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Especialidad</label>
+                                <select class="form-select" name="especialidad">
+                                    <option value="">Todas las especialidades</option>
+                                    <option th:each="esp : ${listaEspecialidades}" 
+                                            th:value="${esp}" 
+                                            th:text="${esp}"
+                                            th:selected="${esp == especialidadSeleccionada}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha</label>
+                                <input type="date" class="form-control" name="fecha" th:value="${fechaSeleccionada}">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <div th:each="cita : ${listaCitas}" class="card mb-3 shadow-sm">
+            <!-- Resultados -->
+            <div class="card shadow-sm">
+                <div class="card-header card-header-historial">
+                    <i class="bi bi-clock-history me-2"></i> Historial de Citas
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">
-                        Cita #<span th:text="${cita.citaId}">1</span>
-                    </h5>
-                    <p class="card-text">
-                        <strong>Paciente</strong>
-                        <span th:text="${cita.pacienteNombre}">Piero Santiago Geldres</span><br />
-                        <strong>DNI</strong>
-                        <span th:text="${cita.dniPaciente}">75916526</span><br />
-                        <strong>Fecha:</strong>
-                        <span th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">14/07/2025</span><br />
-                        <strong>Hora:</strong> <span th:text="${cita.hora}">10:00 AM</span><br />
-                        <strong>Doctor:</strong>
-                        <span th:text="${cita.doctorNombre}">Dr. Pérez</span><br />
-                        <strong>Especialidad:</strong>
-                        <span th:text="${cita.especialidad}">Pediatría</span><br />
-                        <strong>Estado:</strong>
-                        <span th:text="${cita.estado}">ATENTIDA</span>
-                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Paciente</th>
+                                    <th>DNI</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Doctor</th>
+                                    <th>Especialidad</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="cita : ${listaCitas}">
+                                    <td th:text="${cita.citaId}"></td>
+                                    <td th:text="${cita.pacienteNombre}"></td>
+                                    <td th:text="${cita.dniPaciente}"></td>
+                                    <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${cita.hora}"></td>
+                                    <td th:text="${cita.doctorNombre}"></td>
+                                    <td th:text="${cita.especialidad}"></td>
+                                    <td>
+                                        <span th:switch="${cita.estado}" class="badge">
+                                            <span th:case="'ATENDIDA'" class="badge bg-success">Atendida</span>
+                                            <span th:case="'CANCELADA'" class="badge bg-danger">Cancelada</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div th:if="${cita.estado == 'CANCELADA'}" class="btn-group btn-group-sm">
+                                            <a th:href="@{'/recepcionista/cita/modificar/' + ${cita.citaId}}" 
+                                               class="btn btn-reprogramar"
+                                               title="Reprogramar cita">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div th:if="${#lists.isEmpty(listaCitas)}" class="alert alert-info mt-3">
+                        No se encontraron citas en el historial con los filtros seleccionados.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

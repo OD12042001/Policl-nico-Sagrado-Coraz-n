@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
 import com.webapplication.PoliclinicoSagradoCorazon.service.DoctorService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.HorarioService;
+import org.springframework.security.core.Authentication;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -46,9 +48,10 @@ public class HorarioController {
     public String mostrarHorarios(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String especialidad,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             Model model) {
 
-        List<DoctorHorarioDTO> lista = horarioService.obtenerDoctoresConHorarios();
+        List<DoctorHorarioDTO> lista = horarioService.obtenerDoctoresConHorarios(fecha);
 
         // Filtrado por nombre
         if (nombre != null && !nombre.isEmpty()) {
@@ -79,7 +82,8 @@ public class HorarioController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
             HttpSession session) {
-
+        
+        // Si ya está autenticado, redirigir directamente al formulario
         HorarioSeleccionadoDTO dto = new HorarioSeleccionadoDTO();
         dto.setHorario_id(horario_id);
         dto.setNombre(nombre);
@@ -89,15 +93,17 @@ public class HorarioController {
         dto.setFecha(fecha);
         dto.setHora(hora);
 
-        session.setAttribute("horarioSeleccionado", dto); // Guarda en sesión
-
-        return "redirect:/registro-cita"; // te redirige a la vista del formulario de cita
+        session.setAttribute("horarioSeleccionado", dto);
+        System.out.println(dto);
+        System.out.println("guardarHorarioSeleccionado");
+        return "redirect:/registro-cita";
     }
 
     @GetMapping("/registro-cita")
     public String mostrarFormularioCita(HttpSession session, Model model) {
         HorarioSeleccionadoDTO horario = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");
-
+        System.out.println(horario);
+        System.out.println("registro-cita");
         if (horario != null) {
             model.addAttribute("horarioSeleccionado", horario);
         }
@@ -114,15 +120,20 @@ public class HorarioController {
             return "formulario-cita";
         } else if (usuarioActual instanceof RecepcionistaDTO recepcionista) {
             return "formulario-dni";
+        }else if(usuarioActual == null){
+            return "redirect:/login";
         }
         return "error";
     }
 
     @GetMapping("/administrador/horario/nuevo")
-    public String mostrarFormularioNuevoHorario(Model model) {
+    public String mostrarFormularioNuevoHorario(Model model, HttpSession session) {
         model.addAttribute("horario", new HorarioDTO());
         model.addAttribute("listaDoctores", doctorService.obtenerTodosLosDoctores());
-        return "administrador-dashboard/formularioHorario";
+
+        session.setAttribute("horarioTEMP", new HorarioDTO());
+        session.setAttribute("listaDoctoresTEMP", doctorService.obtenerTodosLosDoctores());
+        return "redirect:/portalAdministrador?contenido=administrador-dashboard/formularioHorario";
     }
 
     @PostMapping("/administrador/horario/guardar")
@@ -158,13 +169,16 @@ public class HorarioController {
     }
 
     @GetMapping("/administrador/horario/modificar/{id}")
-    public String mostrarFormularioModificarHorario(@PathVariable("id") int id, Model model) {
+    public String mostrarFormularioModificarHorario(@PathVariable("id") int id, Model model,HttpSession session) {
         Horario horario = horarioService.obtenerPorId(id);
         List<DoctorDTO> listaDoctores = doctorService.obtenerTodosLosDoctores();
 
         model.addAttribute("horario", horario);
         model.addAttribute("listaDoctores", listaDoctores);
-        return "administrador-dashboard/formularioHorarioM"; // crea este HTML
+
+        session.setAttribute("horarioTEMPM", horario);
+        session.setAttribute("listaDoctoresTEMPM", listaDoctores);
+        return "redirect:/portalAdministrador?contenido=administrador-dashboard/formularioHorarioM";
     }
 
     @PostMapping("/administrador/horario/actualizar")
@@ -179,7 +193,8 @@ public class HorarioController {
         }
 
         // Validación: el doctor no debe tener ese mismo horario
-        boolean yaExiste = horarioService.existeHorarioParaDoctor(horario.getDoctor_id(), horario.getFecha(),horario.getHora(), horario.getId());
+        boolean yaExiste = horarioService.existeHorarioParaDoctor(horario.getDoctor_id(), horario.getFecha(),
+                horario.getHora(), horario.getId());
         if (yaExiste) {
             attr.addFlashAttribute("error", "Ese doctor ya tiene un horario para esa fecha y hora.");
             return "redirect:/administrador/horario/modificar/" + horario.getId();

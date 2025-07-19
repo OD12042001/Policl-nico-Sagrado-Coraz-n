@@ -18,7 +18,7 @@ public class DoctorService {
     @Autowired
     private EspecialidadDAO especialidadDAO;
 
-    public int obetenerEspecialidadID(int doctorID){
+    public int obetenerEspecialidadID(int doctorID) {
         return doctorDAO.obetenerEspecialidadID(doctorID);
     }
 
@@ -26,24 +26,42 @@ public class DoctorService {
         return doctorDAO.obtenerTodosLosDoctores();
     }
 
-    public DoctorDTO obtenerPorId(int id){
+    public List<DoctorDTO> filtrarDoctores(String nombreFiltro, String especialidadFiltro) {
+        return doctorDAO.filtrarDoctores(nombreFiltro, especialidadFiltro);
+    }
+
+    public DoctorDTO obtenerPorId(int id) {
         return doctorDAO.obtenerPorId(id);
     }
 
-    public void insertar(DoctorDTO doctor){
+    public void insertar(DoctorDTO doctor) {
         int especialidadID = especialidadDAO.obtenerIdPorNombre(doctor.getEspecialidad());
-        doctorDAO.insertar(doctor,especialidadID);
-        
+        doctorDAO.insertar(doctor, especialidadID);
+
     }
 
-    public void actualizar(DoctorDTO doctor){
+    public void actualizar(DoctorDTO doctor) {
         int especialidadID = especialidadDAO.obtenerIdPorNombre(doctor.getEspecialidad());
-        doctorDAO.actualizar(doctor,especialidadID);
-        
+        doctorDAO.actualizar(doctor, especialidadID);
+
     }
-    /* METODO ES REVISION, RECORDAR QUE SI SE ELIMINAR SE ELIMINARIA TODO LOS HROARIOS Y CITAS QUE TIENEN VINCULADO, MEJOR OPCION PONER ESTADO INACTIVO 
-    public void eliminar(int id){
-        doctorDAO.eliminar(id);
+
+    public List<String> obtenerEspecialidadesUnicas() {
+        return especialidadDAO.obtenerEspecialidadesUnicas();
     }
-    */
+
+    public void cambiarActivado(int iddoctor){
+        doctorDAO.cambiarActivado(iddoctor);
+    }
+
+    public void cambiarDesactivado(int iddoctor){
+        doctorDAO.cambiarDesactivado(iddoctor);
+    }
+    /*
+     * METODO ES REVISION, RECORDAR QUE SI SE ELIMINAR SE ELIMINARIA TODO LOS
+     * HROARIOS Y CITAS QUE TIENEN VINCULADO, MEJOR OPCION PONER ESTADO INACTIVO
+     * public void eliminar(int id){
+     * doctorDAO.eliminar(id);
+     * }
+     */
 }

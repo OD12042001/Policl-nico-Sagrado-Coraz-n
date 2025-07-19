@@ -6,6 +6,7 @@ public class DoctorDTO {
     private String especialidad;
     private String cmp;
     private int especialidadId;
+    private String estado;
     
     public int getId() {
         return id;
@@ -36,6 +37,12 @@ public class DoctorDTO {
     }
     public void setCmp(String cmp) {
         this.cmp = cmp;
+    }
+    public String getEstado() {
+        return estado;
+    }
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     

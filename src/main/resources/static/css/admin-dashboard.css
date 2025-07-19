@@ -1,0 +1,373 @@
+@import url("https://fonts.googleapis.com/css2?family=Aclonica&family=Baskervville:ital@0;0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Podkova:wght@400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Protest+Guerrilla&display=swap");
+
+/* Reset de Box-Sizing para un layout predecible */
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilos globales para la tipografía base y el cuerpo de la página */
+body {
+  font-family: Podkova, Baskervville, Inter, Outfit, Poppins, Aclonica,
+    Playfair Display, sans-serif;
+  color: #000;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 200;
+  line-height: normal;
+  overflow-x: hidden; /* Evita el scroll horizontal */
+  display: flex;
+  min-height: 100vh;
+  background-color: #e9ecef;
+}
+
+/* El wrapper será el contenedor principal con flexbox */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Botón de hamburguesa */
+.hamburger-menu {
+  display: none; /* Oculto por defecto en pantallas grandes */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001; /* Mayor que el sidebar */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.5em;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+  position: fixed; /* Fijo para que no se mueva con el scroll */
+  left: 0;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out; /* Para la animación de entrada/salida */
+}
+
+/* Estilos para la cabecera del sidebar (Logo y título) */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 0 0 20px 0;
+  margin-bottom: 20px;
+  gap: 10px;
+  justify-content: center;
+}
+
+.app-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Estilos para la navegación principal del sidebar */
+.sidebar-nav {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin-bottom: 10px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav li.active a {
+  background-color: #007bff;
+  color: white;
+}
+
+.sidebar-nav .icon {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Separador visual */
+.separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 20px 0;
+}
+
+/* Estilos para la sección de ayuda con imagen de fondo */
+.help-section {
+  background-image: url(../image/Framesidebar.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #0056b3;
+}
+
+.help-icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.help-button {
+  display: inline-block;
+  background-color: rgba(80, 142, 180, 1);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+  box-shadow: 7px 6px 4px 2px rgba(0, 0, 0, 0.3);
+}
+
+.help-button:hover {
+  background-color: #004085;
+}
+
+#necesitasayuda {
+  color: #fff;
+  text-align: center;
+  font-family: Podkova;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* El área de contenido de la tabla */
+.table-content-area {
+  flex-grow: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-left: 250px; /* Desplaza el contenido a la derecha del sidebar fijo */
+  overflow-y: auto; /* Permite el scroll vertical si el contenido es muy largo */
+  background-color: #e9ecef; /* Color de fondo para el área de contenido */
+  transition: margin-left 0.3s ease-in-out; /* Transición para el margen */
+  width: calc(100% - 250px); /* Asegura que no haya scroll horizontal excesivo */
+}
+
+/* Overlay para cuando el sidebar está abierto en móvil */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999; /* Detrás del sidebar, pero encima del contenido */
+  display: none; /* Oculto por defecto */
+}
+.overlay.active {
+  display: block; /* Visible cuando el sidebar está activo */
+}
+.areac { 
+  flex-grow: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-left: 150px; /* Desplaza el contenido a la derecha del sidebar fijo */
+  overflow-y: auto; /* Permite el scroll vertical si el contenido es muy largo */
+  background-color: #e9ecef; /* Color de fondo para el área de contenido */
+  transition: margin-left 0.3s ease-in-out; /* Transición para el margen */
+  width: calc(100% - 250px); /* Asegura que no haya scroll horizontal excesivo */
+  display: flex; /* Añadido para que los elementos dentro se organicen en columna */
+  flex-direction: column;
+  min-height: 80vh; /* Para que ocupe toda la altura visible */
+}
+
+.profile-card {
+  background-color: #fff; /* Fondo blanco */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra suave */
+  margin: 20px 30px; /* Margen superior e inferior, y a los lados */
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Espacio entre secciones de la tarjeta */
+    min-height: 80vh; /* Para que ocupe toda la altura visible */
+
+}
+
+
+/* --- MEDIA QUERIES para Responsividad --- */
+
+/* Para pantallas más pequeñas (ej. tablets, móviles) */
+@media (max-width: 992px) {
+  .hamburger-menu {
+    display: block; /* Muestra el botón de hamburguesa */
+  }
+
+  .sidebar {
+    transform: translateX(-250px); /* Oculta el sidebar por defecto fuera de la vista */
+    /* position: fixed; ya está definido arriba */
+  }
+
+  /* Cuando el sidebar está "activo" (mostrado), lo movemos a la vista */
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .table-content-area {
+    margin-left: 0; /* El contenido ocupa todo el ancho */
+    width: 100%; /* Asegura que ocupe todo el ancho */
+    padding-top: 70px; /* Espacio para el botón de hamburguesa */
+  }
+}
+
+/* Opcional: Ajustes para pantallas aún más pequeñas (móviles) */
+@media (max-width: 576px) {
+  .table-content-area {
+    padding: 10px; /* Menos padding en móviles */
+  }
+  .hamburger-menu {
+    top: 10px;
+    left: 10px;
+    padding: 8px 12px;
+    font-size: 1.2em;
+  }
+}
+
+/* Estilos para el nuevo encabezado (Table Content Header) */
+.table-content-area {
+    display: flex;
+    flex-direction: column; /* Asegura que el header y la tabla se apilen verticalmente */
+    flex-grow: 1; /* Permite que esta área ocupe el espacio restante */
+    padding-top: AUTO; /* Ajusta esto si tu sidebar es de ancho fijo o fluido */
+    background-color: #f8f9fa; /* Color de fondo similar a la imagen */
+    min-height: 100vh; /* Para que ocupe toda la altura visible */
+}
+
+
+/* Header principal del contenido, encima de la tabla */
+.table-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px; /* Espaciado interno */
+    background-color: #fff; /* Fondo blanco para el header */
+    border-bottom: 1px solid #e0e0e0; /* Línea divisoria */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    position: sticky; /* Hace que el encabezado sea pegajoso al hacer scroll */
+    top: 0;
+    z-index: 50; /* Asegura que esté sobre otros elementos al hacer scroll */
+}
+
+.table-content-header .header-title h1 {
+    font-size: 24px;
+    color: #343a40; /* Color oscuro para el título */
+    margin: 0;
+    font-weight: 500;
+}
+
+.table-content-header .header-title p {
+    font-size: 14px;
+    color: #6c757d; /* Color más claro para el subtítulo */
+    margin: 0;
+}
+
+.table-content-header .header-actions {
+    display: flex;
+    gap: 15px; /* Espacio entre los íconos */
+    align-items: center;
+}
+
+.table-content-header .header-actions .icon-button {
+    background: none;
+    border: 1px solid #ced4da; /* Borde para el ícono */
+    border-radius: 5px; /* Bordes ligeramente redondeados */
+    padding: 8px 10px;
+    cursor: pointer;
+    color: #495057; /* Color del ícono */
+    font-size: 18px; /* Tamaño del ícono */
+    transition: all 0.3s ease;
+}
+
+.table-content-header .header-actions .icon-button:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    color: #007bff; /* Color de hover similar al azul */
+}
+
+/* Media Queries para ajustar en dispositivos móviles o pantallas más pequeñas */
+@media (max-width: 992px) {
+    .table-content-area {
+        padding-left: 0; /* Elimina el padding si el sidebar se superpone o es de otra forma */
+    }
+}
+
+@media (max-width: 768px) {
+    .table-content-header {
+        flex-direction: column; /* Apila título y acciones en pantallas pequeñas */
+        align-items: flex-start;
+        padding: 15px 20px;
+        gap: 15px; /* Espacio entre el título y las acciones apiladas */
+    }
+
+    .table-content-header .header-actions {
+        width: 100%; /* Las acciones ocupan todo el ancho */
+        justify-content: flex-start; /* Alinea los íconos a la izquierda */
+        gap: 10px;
+    }
+
+    .table-content-header .header-title h1 {
+        font-size: 20px;
+    }
+
+    .table-content-header .header-title p {
+        font-size: 12px;
+    }
+}
+
+
+
+
+
+

@@ -57,4 +57,14 @@ public class EspecialidadDAO {
         }
     }
 
+    public List<String> obtenerEspecialidadesUnicas() {
+        String sql = """
+                SELECT DISTINCT e.nombre
+                FROM especialidad e
+                JOIN doctor d ON e.id = d.especialidad_id
+                ORDER BY e.nombre
+                """;
+        return jdbc.queryForList(sql, String.class);
+    }
+
 }

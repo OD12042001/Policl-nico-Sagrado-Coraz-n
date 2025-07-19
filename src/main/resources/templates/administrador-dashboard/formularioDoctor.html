@@ -2,44 +2,116 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8" />
-    <title th:text="${doctor.id > 0 ? 'Modificar Doctor' : 'Nuevo Doctor'}"></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Portal Administrador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #3d4e61;
+            --secondary-color: #4a5c72;
+            --content-bg: #ffffff;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-container {
+            background-color: var(--content-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+        }
+        
+        .form-title {
+            color: var(--primary-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h2 th:text="${doctor.id > 0 ? 'Modificar Doctor' : 'Nuevo Doctor'}"></h2>
+    <div th:fragment="contenido">
+        <div class="content">
+            <div class="form-container">
+                <h2 class="form-title">
+                    <i class="bi" th:classappend="${doctor.id > 0} ? 'bi-person-check' : 'bi-person-plus'"></i>
+                    <span th:text="${doctor.id > 0} ? 'Modificar Doctor' : 'Nuevo Doctor'"></span>
+                </h2>
 
-        <form th:action="@{/administrador/doctor/guardar}" th:object="${doctor}" method="post">
-            <!-- ID oculto para edición -->
-            <input type="hidden" th:field="*{id}" />
+                <form th:action="@{/administrador/doctor/guardar}" th:object="${doctor}" method="post">
+                    <!-- ID oculto para edición -->
+                    <input type="hidden" th:field="*{id}" />
 
-            <div class="mb-3">
-                <label class="form-label">Nombre</label>
-                <input type="text" th:field="*{nombre}" class="form-control" required />
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" th:field="*{nombre}" class="form-control" required />
+                            <div class="invalid-feedback">Por favor ingrese el nombre del doctor</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">CMP</label>
+                            <input type="text" th:field="*{cmp}" class="form-control" required />
+                            <div class="invalid-feedback">Por favor ingrese el CMP</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Especialidad</label>
+                        <input list="especialidades" th:field="*{especialidad}" class="form-control" required />
+                        <datalist id="especialidades">
+                            <option th:each="esp : ${listaEspecialidades}" th:value="${esp.nombre}"></option>
+                        </datalist>
+                        <div class="invalid-feedback">Por favor seleccione una especialidad</div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a th:href="@{/portalAdministrador(contenido='administrador-dashboard/doctores')}" 
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-2"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i> Guardar
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">CMP</label>
-                <input type="text" th:field="*{cmp}" class="form-control" required />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Especialidad</label>
-                <input list="especialidades" type="text" th:field="*{especialidad}" class="form-control" required />
-                <datalist id="especialidades">
-                    <option th:each="esp : ${listaEspecialidades}" th:value="${esp.nombre}"></option>
-                </datalist>
-            </div>
-
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <a th:href="@{/portalAdministrador(contenido='administrador-dashboard/doctores')}"
-                    class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+        </div>
     </div>
-</body>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validación de formulario
+        (function() {
+            'use strict';
+            
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+</body>
 </html>
