@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.webapplication.PoliclinicoSagradoCorazon.dto.CitaDetalleDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Cita;
+import com.webapplication.PoliclinicoSagradoCorazon.model.Pago;
 import com.webapplication.PoliclinicoSagradoCorazon.repository.CitaComandoRepository;
 import com.webapplication.PoliclinicoSagradoCorazon.repository.CitaConsultaRepository;
 import com.webapplication.PoliclinicoSagradoCorazon.repository.HorarioComandoRepository;
@@ -50,7 +51,7 @@ public class CitaService {
         citaComandoRepository.insertarCita(cita);
 
         // 3. Marcar el horario como no disponible
-        horarioDAO.marcarComoNoDisponible(horarioId);
+        horarioComandoRepository.marcarComoNoDisponible(horarioId);
     }
 
     public List<CitaDetalleDTO> obtenerCitasProgramadasPorPaciente(int pacienteId) {

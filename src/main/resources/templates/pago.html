@@ -384,8 +384,8 @@
                                         <!-- Términos y condiciones -->
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="termsTarjeta" required>
-                                            <label class="form-check-label" for="termsTarjeta">Acepto los términos y
-                                                condiciones del servicio</label>
+                                            <label class="form-check-label" for="termsTarjeta"><a th:href="@{/terminos}">Acepto los términos y
+                                                condiciones del servicio</a></label>
                                         </div>
 
                                         <button class="btn btn-primary w-100 mt-3">
@@ -406,11 +406,8 @@
 
                                 <!-- Botones para cambiar de método -->
                                 <div class="btn-group w-100 mb-4" role="group">
-                                    <button type="button" class="btn btn-outline-primary" id="btnTarjetaRec">
+                                    <button type="button" class="btn btn-outline-primary active" id="btnTarjetaRec">
                                         <i class="far fa-credit-card me-2"></i>Tarjeta
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success" id="btnYapeRec">
-                                        <i class="fas fa-mobile-alt me-2"></i>Yape
                                     </button>
                                     <button type="button" class="btn btn-outline-secondary" id="btnEfectivoRec">
                                         <i class="fas fa-money-bill-wave me-2"></i>Efectivo
@@ -425,28 +422,40 @@
                                             <label class="form-label">Número de tarjeta</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="far fa-credit-card"></i></span>
-                                                <input type="text" class="form-control"
-                                                    placeholder="1234 5678 9012 3456" required>
+                                                <input type="text" class="form-control" id="numeroTarjetaRec"
+                                                    name="numeroTarjeta" placeholder="1234 5678 9012 3456"
+                                                    maxlength="19" pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}"
+                                                    title="Ingrese 16 dígitos de la tarjeta (ej: 1234 5678 9012 3456)"
+                                                    required oninput="formatCardNumber(this)">
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Titular de la tarjeta</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="far fa-user"></i></span>
-                                                <input type="text" class="form-control"
-                                                    placeholder="Nombre como aparece en la tarjeta" required>
+                                                <input type="text" class="form-control" id="nombreTitularRec"
+                                                    name="nombreTitular" placeholder="Nombre como aparece en la tarjeta"
+                                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+"
+                                                    title="Solo se permiten letras y espacios" required
+                                                    onkeypress="return /[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]/i.test(event.key)">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">Fecha de expiración</label>
-                                                <input type="month" class="form-control" placeholder="MM/AA" required>
+                                                <input type="text" class="form-control" id="fechaExpiracionRec"
+                                                    name="fechaExpiracion" placeholder="MM/AA"
+                                                    pattern="(0[1-9]|1[0-2])\/\d{2}" title="Formato MM/AA (ej: 12/30)"
+                                                    maxlength="5" required oninput="formatExpirationDate(this)">
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label">CVV</label>
                                                 <div class="input-group">
                                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                                    <input type="text" class="form-control" placeholder="123" required>
+                                                    <input type="text" class="form-control" id="cvvRec" name="cvv"
+                                                        placeholder="123" pattern="\d{3}" title="3 dígitos del CVV"
+                                                        maxlength="3" required
+                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                                 </div>
                                             </div>
                                         </div>
@@ -458,39 +467,11 @@
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="termsTarjetaRec"
                                                 required>
-                                            <label class="form-check-label" for="termsTarjetaRec">Acepto los términos y
-                                                condiciones del servicio</label>
+                                            <label class="form-check-label" for="termsTarjetaRec"><a th:href="@{/terminos}">Acepto los términos y
+                                                condiciones del servicio</a></label>
                                         </div>
                                         <button class="btn btn-primary w-100 mt-3">
                                             <i class="far fa-credit-card me-2"></i>Procesar Pago con Tarjeta
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <!-- Formulario: Yape -->
-                                <form method="post" action="/procesar-pago" id="formYapeRec" style="display: none;">
-                                    <div class="payment-method border-success">
-                                        <h5><i class="fas fa-mobile-alt me-2"></i>Pago con Yape</h5>
-                                        <div class="mb-3">
-                                            <label class="form-label">Número de celular asociado a Yape</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-                                                <input type="text" class="form-control" placeholder="987 654 321"
-                                                    required>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="pacienteId" th:value="${pacienteActual.id}">
-                                        <input type="hidden" name="horario_id"
-                                            th:value="${horarioSeleccionado.horario_id}">
-                                        <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
-                                        <input type="hidden" name="metodo" value="YAPE">
-                                        <div class="form-check mt-3">
-                                            <input class="form-check-input" type="checkbox" id="termsYapeRec" required>
-                                            <label class="form-check-label" for="termsYapeRec">Acepto los términos y
-                                                condiciones del servicio</label>
-                                        </div>
-                                        <button class="btn btn-success w-100 mt-3">
-                                            <i class="fas fa-mobile-alt me-2"></i>Procesar Pago con Yape
                                         </button>
                                     </div>
                                 </form>
@@ -508,6 +489,17 @@
                                             th:value="${horarioSeleccionado.horario_id}">
                                         <input type="hidden" name="precio" th:value="${horarioSeleccionado.precio}">
                                         <input type="hidden" name="metodo" value="EFECTIVO">
+                                        <div class="mb-3">
+                                            <label class="form-label">Monto recibido</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">S/</span>
+                                                <input type="number" class="form-control" name="montoRecibido"
+                                                    step="0.01" min="0" th:attr="min=${horarioSeleccionado.precio}"
+                                                    required>
+                                            </div>
+                                            <small class="form-text text-muted">Total a pagar: S/ <span
+                                                    th:text="${horarioSeleccionado.precio}"></span></small>
+                                        </div>
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" id="termsEfectivoRec"
                                                 required>
@@ -612,6 +604,40 @@
             // Limita a 4 dígitos (5 caracteres incluyendo "/")
             if (value.length > 5) value = value.substring(0, 5);
 
+            input.value = value;
+        }
+    </script>
+    <script>
+        // Alternar entre formularios de pago
+        document.getElementById('btnTarjetaRec').addEventListener('click', function () {
+            document.getElementById('formTarjetaRec').style.display = 'block';
+            document.getElementById('formEfectivoRec').style.display = 'none';
+            this.classList.add('active');
+            document.getElementById('btnEfectivoRec').classList.remove('active');
+        });
+
+        document.getElementById('btnEfectivoRec').addEventListener('click', function () {
+            document.getElementById('formTarjetaRec').style.display = 'none';
+            document.getElementById('formEfectivoRec').style.display = 'block';
+            this.classList.add('active');
+            document.getElementById('btnTarjetaRec').classList.remove('active');
+        });
+
+        // Formatea el número de tarjeta con espacios cada 4 dígitos
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            if (value.length > 19) value = value.substring(0, 19);
+            input.value = value;
+        }
+
+        // Formatea la fecha de expiración (MM/AA)
+        function formatExpirationDate(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            if (value.length > 5) value = value.substring(0, 5);
             input.value = value;
         }
     </script>

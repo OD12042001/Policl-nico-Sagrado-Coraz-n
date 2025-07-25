@@ -11,6 +11,14 @@
 <body>
     <div th:fragment="contenido">
         <div class="container py-4">
+            <div th:if="${notificacion}" class="alert alert-dismissible fade show"
+            th:classappend="'alert-' + ${notificacion.tipo}">
+            <strong th:text="${notificacion.titulo}"></strong>
+            <span th:text="${notificacion.mensaje}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
             <!-- Filtros -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body">

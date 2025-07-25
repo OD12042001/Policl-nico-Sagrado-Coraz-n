@@ -36,7 +36,7 @@ public class SeguridadConfig {
 public SecurityFilterChain filtro(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/login","/horario","/validarDni", "/procesarLogin", "/image/**", "/css/**", "/js/**", "/webjars/**", "/index","/registro-cita","/guardarHorarioSeleccionado").permitAll()
+            .requestMatchers("/", "/login","/horario","/validarDni", "/procesarLogin", "/image/**", "/css/**", "/js/**", "/webjars/**", "/index","/registro-cita","/guardarHorarioSeleccionado","/terminos").permitAll()
             .requestMatchers(HttpMethod.POST, "/registrarPaciente").permitAll()
             .requestMatchers("/portalPaciente").hasAuthority("PACIENTE")
             .requestMatchers("/portalRecepcionista","/formulario-dni").hasAuthority("RECEPCIONISTA")

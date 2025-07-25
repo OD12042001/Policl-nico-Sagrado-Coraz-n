@@ -40,7 +40,6 @@ public class CitaController {
     @Autowired
     private DoctorService doctorService;
 
-
     @PostMapping("/confirmar-cita")
     public String confirmarCita() {
         // Aquí podrías guardar datos si quieres, o dejar vacío si no haces nada
@@ -83,7 +82,7 @@ public class CitaController {
     }
 
     @GetMapping("/registro-dni")
-    public String mostrarFormularioCita(HttpSession session, Model model,RedirectAttributes redirectAttributes) {
+    public String mostrarFormularioCita(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         HorarioSeleccionadoDTO horario = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");
 
         if (horario != null) {
@@ -94,14 +93,14 @@ public class CitaController {
             model.addAttribute("pacienteActual", paciente);
         Object usuarioActual = session.getAttribute("usuarioActual");
         if (citaService.verificarSiExisteCitaEnFechaHora(paciente.getId(), horario.getFecha(), horario.getHora())) {
-                redirectAttributes.addFlashAttribute("notificacion", new Notificacion(
-                        "Error en agendamiento",
-                        "El paciente ya cuenta con una cita programada para esta misma fecha y hora.",
-                        "error"));
-                return "redirect:/horario";
-            } else {
-                return "formulario-cita";
-            }
+            redirectAttributes.addFlashAttribute("notificacion", new Notificacion(
+                    "Error en agendamiento",
+                    "El paciente ya cuenta con una cita programada para esta misma fecha y hora.",
+                    "error"));
+            return "redirect:/horario";
+        } else {
+            return "formulario-cita";
+        }
     }
 
     @GetMapping("/formulario-dni")
@@ -198,28 +197,50 @@ public class CitaController {
     }
 
     @PostMapping("/paciente/cita/modificar")
-    public String modificarCita(@RequestParam int citaId, @RequestParam int nuevoHorarioId) {
-        citaService.cambiarDispnibilidadSI(citaId);
-        citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
-        citaService.cambiarDispnibilidadNO(nuevoHorarioId);
-        return "redirect:/portalPaciente?contenido=paciente-dashboard/MisCitas";
-    }
-
-    @PostMapping("/recepcionista/cita/modificar")
-    public String modificarCitaPaciente(@RequestParam int citaId, @RequestParam int nuevoHorarioId) {
-
+    public String modificarCita(@RequestParam int citaId, @RequestParam int nuevoHorarioId,
+            RedirectAttributes redirectAttributes) {
         Cita cita = citaService.obtenerPorId(citaId);
-        if (cita.getEstado().equalsIgnoreCase("PROGRAMADA")) {
+        Horario horario = horarioService.obtenerPorId(nuevoHorarioId);
+        if (citaService.verificarSiExisteCitaEnFechaHora(cita.getPaciente_id(), horario.getFecha(),
+                horario.getHora())) {
+            redirectAttributes.addFlashAttribute("notificacion", new Notificacion(
+                    "Error en agendamiento",
+                    "Usted ya tiene una cita programada para esta misma fecha y hora.",
+                    "error"));
+            return "redirect:/portalPaciente?contenido=paciente-dashboard/MisCitas";
+        } else {
             citaService.cambiarDispnibilidadSI(citaId);
             citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
             citaService.cambiarDispnibilidadNO(nuevoHorarioId);
-            return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/citastotales";
-        }else{
-            citaService.cambiarDispnibilidadSI(citaId);
-        citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
-        citaService.cambiarDispnibilidadNO(nuevoHorarioId);
-        return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/citastotales";
+            return "redirect:/portalPaciente?contenido=paciente-dashboard/MisCitas";
         }
-        
+    }
+
+    @PostMapping("/recepcionista/cita/modificar")
+    public String modificarCitaPaciente(@RequestParam int citaId, @RequestParam int nuevoHorarioId,
+            RedirectAttributes redirectAttributes) {
+
+        Cita cita = citaService.obtenerPorId(citaId);
+        Horario horario = horarioService.obtenerPorId(nuevoHorarioId);
+        if (citaService.verificarSiExisteCitaEnFechaHora(cita.getPaciente_id(), horario.getFecha(),
+                horario.getHora())) {
+            redirectAttributes.addFlashAttribute("notificacion", new Notificacion(
+                    "Error en agendamiento",
+                    "El paciente ya tiene una cita programada para esta misma fecha y hora.",
+                    "error"));
+            return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/citastotales";
+        } else {
+            if (cita.getEstado().equalsIgnoreCase("PROGRAMADA")) {
+                citaService.cambiarDispnibilidadSI(citaId);
+                citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
+                citaService.cambiarDispnibilidadNO(nuevoHorarioId);
+                return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/citastotales";
+            } else {
+                citaService.cambiarDispnibilidadSI(citaId);
+                citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
+                citaService.cambiarDispnibilidadNO(nuevoHorarioId);
+                return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/historialTotal";
+            }
+        }
     }
 }

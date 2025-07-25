@@ -305,4 +305,10 @@ public class PortalController {
         }
         return "error";
     }
+
+    @GetMapping("/terminos")
+    public String mostrarTerminosYCondiciones() {
+        return "terminosYcondiciones";
+    }
+    
 }
