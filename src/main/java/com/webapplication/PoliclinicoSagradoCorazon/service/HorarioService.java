@@ -7,34 +7,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.webapplication.PoliclinicoSagradoCorazon.dao.DoctorDAO;
-import com.webapplication.PoliclinicoSagradoCorazon.dao.EspecialidadDAO;
-import com.webapplication.PoliclinicoSagradoCorazon.dao.HorarioDAO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorHorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Doctor;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Especialidad;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.DoctorConsultaRepository;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.EspecialidadConsultaRepository;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.HorarioComandoRepository;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.HorarioConsultaRepository;
 
 @Service
 public class HorarioService {
 
-    @Autowired
-    private DoctorDAO doctorDAO;
+    private final DoctorConsultaRepository doctorConsultaRepository;
+    private final HorarioConsultaRepository horarioConsultaRepository;
+    private final HorarioComandoRepository horarioComandoRepository;
+    private final EspecialidadConsultaRepository especialidadConsultaRepository;
 
-    @Autowired
-    private HorarioDAO horarioDAO;
-
-    @Autowired
-    private EspecialidadDAO especialidadDAO;
+    public HorarioService(DoctorConsultaRepository doctorConsultaRepository,
+            HorarioConsultaRepository horarioConsultaRepository, HorarioComandoRepository horarioComandoRepository,
+            EspecialidadConsultaRepository especialidadConsultaRepository) {
+        this.doctorConsultaRepository = doctorConsultaRepository;
+        this.horarioConsultaRepository = horarioConsultaRepository;
+        this.horarioComandoRepository = horarioComandoRepository;
+        this.especialidadConsultaRepository = especialidadConsultaRepository;
+    }
 
     public List<DoctorHorarioDTO> obtenerDoctoresConHorarios(LocalDate fechaFiltro) {
         // lsitar todos los doctores activos
-        List<Doctor> doctores = doctorDAO.listarTodos();
+        List<Doctor> doctores = doctorConsultaRepository.listarTodos();
 
         // declarar lista de doctores con sus horarios
         List<DoctorHorarioDTO> resultado = new ArrayList<>();
@@ -48,11 +51,11 @@ public class HorarioService {
             List<Horario> horarios;
             if (fechaFiltro != null) {
                 // Si hay filtro por fecha, obtener solo los horarios de esa fecha
-                horarios = horarioDAO.obtenerHorariosDisponiblesPorFecha(doc.getId(), fechaFiltro,
+                horarios = horarioConsultaRepository.obtenerHorariosDisponiblesPorFecha(doc.getId(), fechaFiltro,
                         fechaFiltro.equals(fechaActual) ? horaActual : null);
             } else {
                 // Sin filtro por fecha, obtener todos los horarios futuros
-                horarios = horarioDAO.obtenerHorariosDisponibles(doc.getId(), fechaActual, horaActual);
+                horarios = horarioConsultaRepository.obtenerHorariosDisponibles(doc.getId(), fechaActual, horaActual);
             }
             // Filtrar horarios que estén disponibles
             List<Horario> horariosDisponibles = horarios.stream()
@@ -63,7 +66,7 @@ public class HorarioService {
             Map<String, List<Horario>> horariosPorFecha = horariosDisponibles.stream()
                     .collect(Collectors.groupingBy(h -> h.getFecha().format(formatter)));
 
-            Especialidad esp = especialidadDAO.obtenerPorId(doc.getEspecialidad_id());
+            Especialidad esp = especialidadConsultaRepository.obtenerPorId(doc.getEspecialidad_id());
 
             DoctorHorarioDTO dto = new DoctorHorarioDTO();
             dto.setId(doc.getId());
@@ -84,46 +87,47 @@ public class HorarioService {
     }
 
     public Horario obtenerPorId(int citaId) {
-        return horarioDAO.obtenerPorId(citaId);
+        return horarioConsultaRepository.obtenerPorId(citaId);
     }
 
     public List<Horario> obtenerDisponiblesPorDoctor(int doctorId) {
-        return horarioDAO.obtenerDisponiblesPorDoctor(doctorId);
+        return horarioConsultaRepository.obtenerDisponiblesPorDoctor(doctorId);
     }
 
     public List<HorarioDTO> obtenerDisponiblesPorespecialidad(int especialidad_id) {
-        return horarioDAO.obtenerDisponiblesPorespecialidad(especialidad_id);
+        return horarioConsultaRepository.obtenerDisponiblesPorespecialidad(especialidad_id);
     }
 
     public List<HorarioDTO> obtenerTodos() {
-        return horarioDAO.obtenerTodos();
+        return horarioConsultaRepository.obtenerTodos();
     }
 
     public List<HorarioDTO> filtrarHorarios(String disponible, LocalDate fecha) {
 
-        return horarioDAO.filtrarHorarios(disponible, fecha);
+        return horarioConsultaRepository.filtrarHorarios(disponible, fecha);
     }
 
     public boolean existeHorario(String nombreDoctor, LocalDate fecha, LocalTime hora) {
-        int doctorId = doctorDAO.obtenerIDporNombre(nombreDoctor);
-        return horarioDAO.existeHorario(doctorId, fecha, hora);
+        int doctorId = doctorConsultaRepository.obtenerIDporNombre(nombreDoctor);
+        return horarioConsultaRepository.existeHorario(doctorId, fecha, hora);
     }
 
     public void insertarHorario(HorarioDTO horario) {
-        int doctorId = doctorDAO.obtenerIDporNombre(horario.getNombreDoctor());
+        int doctorId = doctorConsultaRepository.obtenerIDporNombre(horario.getNombreDoctor());
         horario.setDoctorId(doctorId);
-        horarioDAO.insertarHorario(horario);
+        horarioComandoRepository.insertarHorario(horario);
     }
 
     public void actualizarDisponibilidad(int horarioId, String estado) {
-        horarioDAO.actualizarDisponibilidad(horarioId, estado);
+        horarioComandoRepository.actualizarDisponibilidad(horarioId, estado);
     }
 
     public boolean existeHorarioParaDoctor(int doctorId, LocalDate fecha, LocalTime hora, int horarioId) {
-        return horarioDAO.existeHorarioParaDoctor(doctorId, fecha, hora, horarioId);
+        return horarioConsultaRepository.existeHorarioParaDoctor(doctorId, fecha, hora, horarioId);
     }
 
     public void actualizar(Horario horario) {
-        horarioDAO.actualizar(horario);
+        horarioComandoRepository.actualizar(horario);
     }
+
 }

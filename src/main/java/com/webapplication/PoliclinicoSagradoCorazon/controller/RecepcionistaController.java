@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.service.RecepcionistaService;
 

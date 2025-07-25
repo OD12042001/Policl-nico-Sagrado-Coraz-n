@@ -13,14 +13,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioSeleccionadoDTO;
+import com.webapplication.PoliclinicoSagradoCorazon.dto.Notificacion;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.PacienteDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Cita;
-import com.webapplication.PoliclinicoSagradoCorazon.model.Paciente1;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
 import com.webapplication.PoliclinicoSagradoCorazon.service.CitaService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.DoctorService;
-import com.webapplication.PoliclinicoSagradoCorazon.service.EmailService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.HorarioService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.PacienteService;
 
@@ -41,8 +40,6 @@ public class CitaController {
     @Autowired
     private DoctorService doctorService;
 
-    @Autowired
-    private EmailService emailService;
 
     @PostMapping("/confirmar-cita")
     public String confirmarCita() {
@@ -86,7 +83,7 @@ public class CitaController {
     }
 
     @GetMapping("/registro-dni")
-    public String mostrarFormularioCita(HttpSession session, Model model) {
+    public String mostrarFormularioCita(HttpSession session, Model model,RedirectAttributes redirectAttributes) {
         HorarioSeleccionadoDTO horario = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");
 
         if (horario != null) {
@@ -96,8 +93,15 @@ public class CitaController {
         if (paciente != null)
             model.addAttribute("pacienteActual", paciente);
         Object usuarioActual = session.getAttribute("usuarioActual");
-
-        return "formulario-cita";
+        if (citaService.verificarSiExisteCitaEnFechaHora(paciente.getId(), horario.getFecha(), horario.getHora())) {
+                redirectAttributes.addFlashAttribute("notificacion", new Notificacion(
+                        "Error en agendamiento",
+                        "El paciente ya cuenta con una cita programada para esta misma fecha y hora.",
+                        "error"));
+                return "redirect:/horario";
+            } else {
+                return "formulario-cita";
+            }
     }
 
     @GetMapping("/formulario-dni")
@@ -203,9 +207,19 @@ public class CitaController {
 
     @PostMapping("/recepcionista/cita/modificar")
     public String modificarCitaPaciente(@RequestParam int citaId, @RequestParam int nuevoHorarioId) {
-        citaService.cambiarDispnibilidadSI(citaId);
+
+        Cita cita = citaService.obtenerPorId(citaId);
+        if (cita.getEstado().equalsIgnoreCase("PROGRAMADA")) {
+            citaService.cambiarDispnibilidadSI(citaId);
+            citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
+            citaService.cambiarDispnibilidadNO(nuevoHorarioId);
+            return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/citastotales";
+        }else{
+            citaService.cambiarDispnibilidadSI(citaId);
         citaService.actualizarHorarioCita(citaId, nuevoHorarioId);
         citaService.cambiarDispnibilidadNO(nuevoHorarioId);
         return "redirect:/portalRecepcionista?contenido=recepcionista-dashboard/citastotales";
+        }
+        
     }
 }

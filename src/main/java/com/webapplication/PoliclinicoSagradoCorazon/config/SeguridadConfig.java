@@ -14,6 +14,8 @@ public class SeguridadConfig {
 
     @Autowired
     private CustomSuccessHandler customSuccessHandler;
+    @Autowired
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     /*
      * @Bean
@@ -46,6 +48,7 @@ public SecurityFilterChain filtro(HttpSecurity http) throws Exception {
             .loginPage("/login")
             .loginProcessingUrl("/procesarLogin")
             .successHandler(customSuccessHandler)
+            .failureHandler(customAuthenticationFailureHandler)
             .permitAll()
         )
         .logout(logout -> logout

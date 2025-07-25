@@ -12,8 +12,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.PacienteDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
-import com.webapplication.PoliclinicoSagradoCorazon.model.Cita;
-import com.webapplication.PoliclinicoSagradoCorazon.model.Doctor;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Paciente1;
 import com.webapplication.PoliclinicoSagradoCorazon.service.CitaService;

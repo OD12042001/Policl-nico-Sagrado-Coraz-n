@@ -2,66 +2,65 @@ package com.webapplication.PoliclinicoSagradoCorazon.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.webapplication.PoliclinicoSagradoCorazon.dao.DoctorDAO;
-import com.webapplication.PoliclinicoSagradoCorazon.dao.EspecialidadDAO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorDTO;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.DoctorComandoRepository;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.DoctorConsultaRepository;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.EspecialidadConsultaRepository;
 
 @Service
 public class DoctorService {
 
-    @Autowired
-    private DoctorDAO doctorDAO;
+    private final DoctorConsultaRepository doctorConsultaRepository;
+    private final DoctorComandoRepository doctorComandoRepository;
+    private final EspecialidadConsultaRepository especialidadConsultaRepository;
 
-    @Autowired
-    private EspecialidadDAO especialidadDAO;
+    public DoctorService(DoctorConsultaRepository doctorConsultaRepository,
+            DoctorComandoRepository doctorComandoRepository,
+            EspecialidadConsultaRepository especialidadConsultaRepository) {
+        this.doctorConsultaRepository = doctorConsultaRepository;
+        this.doctorComandoRepository = doctorComandoRepository;
+        this.especialidadConsultaRepository = especialidadConsultaRepository;
+    }
 
     public int obetenerEspecialidadID(int doctorID) {
-        return doctorDAO.obetenerEspecialidadID(doctorID);
+        return doctorConsultaRepository.obetenerEspecialidadID(doctorID);
     }
 
     public List<DoctorDTO> obtenerTodosLosDoctores() {
-        return doctorDAO.obtenerTodosLosDoctores();
+        return doctorConsultaRepository.obtenerTodosLosDoctores();
     }
 
     public List<DoctorDTO> filtrarDoctores(String nombreFiltro, String especialidadFiltro) {
-        return doctorDAO.filtrarDoctores(nombreFiltro, especialidadFiltro);
+        return doctorConsultaRepository.filtrarDoctores(nombreFiltro, especialidadFiltro);
     }
 
     public DoctorDTO obtenerPorId(int id) {
-        return doctorDAO.obtenerPorId(id);
+        return doctorConsultaRepository.obtenerPorId(id);
     }
 
     public void insertar(DoctorDTO doctor) {
-        int especialidadID = especialidadDAO.obtenerIdPorNombre(doctor.getEspecialidad());
-        doctorDAO.insertar(doctor, especialidadID);
+        int especialidadID = especialidadConsultaRepository.obtenerIdPorNombre(doctor.getEspecialidad());
+        doctorComandoRepository.insertar(doctor, especialidadID);
 
     }
 
     public void actualizar(DoctorDTO doctor) {
-        int especialidadID = especialidadDAO.obtenerIdPorNombre(doctor.getEspecialidad());
-        doctorDAO.actualizar(doctor, especialidadID);
+        int especialidadID = especialidadConsultaRepository.obtenerIdPorNombre(doctor.getEspecialidad());
+        doctorComandoRepository.actualizar(doctor, especialidadID);
 
     }
 
     public List<String> obtenerEspecialidadesUnicas() {
-        return especialidadDAO.obtenerEspecialidadesUnicas();
+        return especialidadConsultaRepository.obtenerEspecialidadesUnicas();
     }
 
-    public void cambiarActivado(int iddoctor){
-        doctorDAO.cambiarActivado(iddoctor);
+    public void cambiarActivado(int iddoctor) {
+        doctorComandoRepository.cambiarActivado(iddoctor);
     }
 
-    public void cambiarDesactivado(int iddoctor){
-        doctorDAO.cambiarDesactivado(iddoctor);
+    public void cambiarDesactivado(int iddoctor) {
+        doctorComandoRepository.cambiarDesactivado(iddoctor);
     }
-    /*
-     * METODO ES REVISION, RECORDAR QUE SI SE ELIMINAR SE ELIMINARIA TODO LOS
-     * HROARIOS Y CITAS QUE TIENEN VINCULADO, MEJOR OPCION PONER ESTADO INACTIVO
-     * public void eliminar(int id){
-     * doctorDAO.eliminar(id);
-     * }
-     */
 }

@@ -5,19 +5,25 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.webapplication.PoliclinicoSagradoCorazon.dto.CitaDetalleDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Cita;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.CitaComandoRepository;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.CitaConsultaRepository;
 
 @Repository
-public class CitaDAO {
-    @Autowired
-    private JdbcTemplate jdbc;
+public class CitaDAOImpl implements CitaConsultaRepository, CitaComandoRepository {
 
+    private final JdbcTemplate jdbc;
+
+    public CitaDAOImpl(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
+
+    @Override
     public boolean verificarSiExisteCitaEnFechaHora(int idPaciente, LocalDate fecha, LocalTime hora) {
         String sql = """
                 SELECT COUNT(*) > 0 AS existe
@@ -28,16 +34,16 @@ public class CitaDAO {
                 AND h.hora = ?
                 AND c.estado = 'PROGRAMADA'
                 """;
-        
+
         return Boolean.TRUE.equals(jdbc.queryForObject(
-            sql, 
-            Boolean.class, 
-            idPaciente, 
-            fecha, 
-            hora
-        ));
+                sql,
+                Boolean.class,
+                idPaciente,
+                fecha,
+                hora));
     }
 
+    @Override
     public void insertarCita(Cita cita) {
         String sql = "INSERT INTO cita (paciente_id, horario_id, pago_id, estado) VALUES (?, ?, ?, ?)";
         jdbc.update(sql,
@@ -47,6 +53,7 @@ public class CitaDAO {
                 cita.getEstado());
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasProgramadasPorPaciente(int pacienteId) {
         String sql = """
                     SELECT c.id AS citaId,
@@ -65,6 +72,7 @@ public class CitaDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class), pacienteId);
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasCanceladasPorPaciente(int pacienteId) {
         String sql = """
                     SELECT c.id AS citaId,
@@ -83,6 +91,7 @@ public class CitaDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class), pacienteId);
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasProgramadasPorPacienteYFecha(int pacienteId, LocalDate fecha) {
         String sql = """
                 SELECT c.id AS citaId,
@@ -103,6 +112,7 @@ public class CitaDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class), pacienteId, fecha);
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasProgramadasTotales() {
         String sql = """
                     SELECT c.id AS citaId,
@@ -124,6 +134,7 @@ public class CitaDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class));
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasAtendidasPorPaciente(int pacienteId) {
         String sql = """
                     SELECT c.id AS citaId,
@@ -142,6 +153,7 @@ public class CitaDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class), pacienteId);
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasAtendidasPorPacienteYFecha(int pacienteId, LocalDate fecha) {
         String sql = """
                     SELECT c.id AS citaId,
@@ -160,6 +172,7 @@ public class CitaDAO {
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class), pacienteId, fecha);
     }
 
+    @Override
     public List<CitaDetalleDTO> obtenerCitasAtendidasTotales() {
         String sql = """
                     SELECT c.id AS citaId,
@@ -175,25 +188,29 @@ public class CitaDAO {
                 JOIN paciente p ON c.paciente_id = p.id
                 JOIN doctor d ON h.doctor_id = d.id
                 JOIN especialidad e ON d.especialidad_id = e.id
-                WHERE c.estado IN ('ATENDIDA', 'CANCELADA') 
+                WHERE c.estado IN ('ATENDIDA', 'CANCELADA')
                 """;
         return jdbc.query(sql, new BeanPropertyRowMapper<>(CitaDetalleDTO.class));
     }
 
+    @Override
     public Cita obtenerPorId(int citaId) {
         String sql = "SELECT * FROM cita WHERE id = ?";
         return jdbc.queryForObject(sql, new BeanPropertyRowMapper<>(Cita.class), citaId);
     }
 
+    @Override
     public void eliminarPorId(int citaId) {
         jdbc.update("DELETE FROM cita WHERE id = ?", citaId);
     }
 
+    @Override
     public void actualizarHorarioCita(int citaId, int nuevoHorarioId) {
         String sql = "UPDATE cita SET horario_id = ? , estado = 'PROGRAMADA' WHERE id = ?";
         jdbc.update(sql, nuevoHorarioId, citaId);
     }
 
+    @Override
     public void marcarCita(int citaID) {
         String sql = "UPDATE cita c " +
                 "JOIN horario h ON c.horario_id = h.id " +
@@ -204,6 +221,7 @@ public class CitaDAO {
         jdbc.update(sql, citaID);
     }
 
+    @Override
     public void cancelarCita(int citaID) {
         String sql = "UPDATE cita c " +
                 "JOIN horario h ON c.horario_id = h.id " +
@@ -214,6 +232,7 @@ public class CitaDAO {
         jdbc.update(sql, citaID);
     }
 
+    @Override
     public List<CitaDetalleDTO> buscarCitasProgramadasPorFiltros(String dni, String especialidad, LocalDate fecha) {
         StringBuilder sql = new StringBuilder(
                 "SELECT c.id AS citaId, p.nombre AS pacienteNombre, p.dni AS dniPaciente, " +
@@ -248,6 +267,7 @@ public class CitaDAO {
         return jdbc.query(sql.toString(), params.toArray(), new BeanPropertyRowMapper<>(CitaDetalleDTO.class));
     }
 
+    @Override
     public List<CitaDetalleDTO> buscarCitasHistorialPorFiltros(String dni, String especialidad, LocalDate fecha) {
         StringBuilder sql = new StringBuilder(
                 "SELECT c.id AS citaId, p.nombre AS pacienteNombre, p.dni AS dniPaciente, " +
@@ -281,6 +301,7 @@ public class CitaDAO {
         return jdbc.query(sql.toString(), params.toArray(), new BeanPropertyRowMapper<>(CitaDetalleDTO.class));
     }
 
+    @Override
     public List<String> obtenerEspecialidadesProgramadas() {
         String sql = "SELECT DISTINCT e.nombre " +
                 "FROM cita c " +
@@ -292,6 +313,7 @@ public class CitaDAO {
         return jdbc.queryForList(sql, String.class);
     }
 
+    @Override
     public List<String> obtenerEspecialidadesHistorial() {
         String sql = "SELECT DISTINCT e.nombre " +
                 "FROM cita c " +
@@ -303,6 +325,5 @@ public class CitaDAO {
 
         return jdbc.queryForList(sql, String.class);
     }
-
 
 }

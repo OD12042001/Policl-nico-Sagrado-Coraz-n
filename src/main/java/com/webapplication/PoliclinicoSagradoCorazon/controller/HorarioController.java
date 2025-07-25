@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +22,13 @@ import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorHorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioSeleccionadoDTO;
+import com.webapplication.PoliclinicoSagradoCorazon.dto.Notificacion;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.PacienteDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
+import com.webapplication.PoliclinicoSagradoCorazon.service.CitaService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.DoctorService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.HorarioService;
-import org.springframework.security.core.Authentication;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -43,6 +43,9 @@ public class HorarioController {
 
     @Autowired
     private EspecialidadDAO especialidadDAO;
+
+    @Autowired
+    private CitaService citaService;
 
     @GetMapping("/horario")
     public String mostrarHorarios(
@@ -82,7 +85,7 @@ public class HorarioController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
             HttpSession session) {
-        
+
         // Si ya está autenticado, redirigir directamente al formulario
         HorarioSeleccionadoDTO dto = new HorarioSeleccionadoDTO();
         dto.setHorario_id(horario_id);
@@ -100,7 +103,7 @@ public class HorarioController {
     }
 
     @GetMapping("/registro-cita")
-    public String mostrarFormularioCita(HttpSession session, Model model) {
+    public String mostrarFormularioCita(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         HorarioSeleccionadoDTO horario = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");
         System.out.println(horario);
         System.out.println("registro-cita");
@@ -116,11 +119,19 @@ public class HorarioController {
             PacienteDTO paciente = (PacienteDTO) session.getAttribute("pacienteActual");
             if (paciente != null)
                 model.addAttribute("pacienteActual", paciente);
+            if (citaService.verificarSiExisteCitaEnFechaHora(paciente.getId(), horario.getFecha(), horario.getHora())) {
+                redirectAttributes.addFlashAttribute("notificacion", new Notificacion(
+                        "Error en agendamiento",
+                        "Usted ya tiene una cita programada para esta misma fecha y hora.",
+                        "error"));
+                return "redirect:/horario";
+            } else {
+                return "formulario-cita";
+            }
 
-            return "formulario-cita";
         } else if (usuarioActual instanceof RecepcionistaDTO recepcionista) {
             return "formulario-dni";
-        }else if(usuarioActual == null){
+        } else if (usuarioActual == null) {
             return "redirect:/login";
         }
         return "error";
@@ -169,7 +180,7 @@ public class HorarioController {
     }
 
     @GetMapping("/administrador/horario/modificar/{id}")
-    public String mostrarFormularioModificarHorario(@PathVariable("id") int id, Model model,HttpSession session) {
+    public String mostrarFormularioModificarHorario(@PathVariable("id") int id, Model model, HttpSession session) {
         Horario horario = horarioService.obtenerPorId(id);
         List<DoctorDTO> listaDoctores = doctorService.obtenerTodosLosDoctores();
 

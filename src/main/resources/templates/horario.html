@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,39 +14,39 @@
             --accent-color: #ff7e5f;
             --light-bg: #f8fafc;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light-bg);
             color: #333;
         }
-        
+
         .navbar {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .navbar-brand {
             font-weight: 700;
             color: var(--primary-color);
             display: flex;
             align-items: center;
         }
-        
+
         .navbar-brand img {
             margin-right: 10px;
         }
-        
+
         .nav-link {
             font-weight: 500;
             color: #555;
             transition: all 0.3s;
         }
-        
+
         .nav-link:hover {
             color: var(--primary-color);
         }
-        
+
         .card {
             border: none;
             border-radius: 12px;
@@ -54,12 +55,12 @@
             overflow: hidden;
             margin-bottom: 25px;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
-        
+
         .card-header {
             background: linear-gradient(135deg, var(--primary-color), #1a616d);
             color: white;
@@ -67,11 +68,11 @@
             padding: 15px 20px;
             border-bottom: none;
         }
-        
+
         .card-body {
             padding: 25px;
         }
-        
+
         .btn-success {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
@@ -80,54 +81,56 @@
             letter-spacing: 0.5px;
             transition: all 0.3s;
         }
-        
+
         .btn-success:hover {
             background-color: #3d8b40;
             transform: translateY(-2px);
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-outline-primary {
             color: var(--primary-color);
             border-color: var(--primary-color);
         }
-        
+
         .btn-outline-primary:hover {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         label {
             font-weight: 500;
             color: var(--primary-color);
             margin-bottom: 8px;
         }
-        
-        .form-control, .form-select {
+
+        .form-control,
+        .form-select {
             padding: 12px 15px;
             border-radius: 8px;
             border: 1px solid #ced4da;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        
-        .form-control:focus, .form-select:focus {
+
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(42, 127, 141, 0.25);
         }
-        
+
         .input-group-text {
             background-color: #f8f9fa;
             border-right: none;
         }
-        
+
         .input-group .form-control {
             border-left: none;
         }
-        
+
         .doctor-card {
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -135,64 +138,108 @@
             margin-bottom: 25px;
             overflow: hidden;
         }
-        
+
         .doctor-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
-        
+
         .doctor-img {
             width: 120px;
             height: 120px;
             object-fit: cover;
             border-radius: 8px;
         }
-        
+
         .time-slot {
             transition: all 0.3s;
             border-radius: 8px;
         }
-        
+
         .time-slot:hover {
             background-color: var(--primary-color);
             color: white;
         }
-        
+
         .modal-content {
             border-radius: 12px;
             overflow: hidden;
             border: none;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         }
-        
+
         .modal-header {
             background: linear-gradient(135deg, var(--primary-color), #1a616d);
             color: white;
             border-bottom: none;
         }
-        
+
         .modal-footer {
             border-top: 1px solid #eee;
         }
-        
+
         @media (max-width: 768px) {
             .doctor-img {
                 width: 80px;
                 height: 80px;
             }
-            
+
             .card-body {
                 padding: 20px;
             }
         }
+
+        .update-notice {
+            background-color: rgba(42, 127, 141, 0.1);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 8px 8px 0;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .update-notice i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .update-notice-content h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .update-notice-content p {
+            margin-bottom: 0;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .update-notice {
+                flex-direction: column;
+                text-align: center;
+                border-left: none;
+                border-top: 4px solid var(--primary-color);
+                border-radius: 0 0 8px 8px;
+            }
+
+            .update-notice i {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light px-4">
             <div class="container-fluid">
                 <a class="navbar-brand" th:href="@{/index}">
-                    <img src="logo.png" alt="Logo" width="35" height="35" class="d-inline-block align-text-top" />
+                    <img th:src="@{/image/LogoEmpresa.png}" alt="Logo" width="35" height="35"
+                        class="d-inline-block align-text-top" />
                     Policlínico Salud Integral
                 </a>
 
@@ -253,6 +300,23 @@
     </header>
 
     <div class="container my-4">
+        <!-- Aviso de actualización de horarios -->
+        <div class="update-notice">
+            <i class="fas fa-sync-alt"></i>
+            <div class="update-notice-content">
+                <h5><i class="fas fa-info-circle me-2"></i>Actualización de horarios</h5>
+                <p>Los horarios médicos se actualizan cada fin de semana. Te recomendamos revisar regularmente para ver
+                    las últimas disponibilidades.</p>
+            </div>
+        </div>
+        <div th:if="${notificacion}" class="alert alert-dismissible fade show"
+            th:classappend="'alert-' + ${notificacion.tipo}">
+            <strong th:text="${notificacion.titulo}"></strong>
+            <span th:text="${notificacion.mensaje}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h3 class="mb-0"><i class="far fa-calendar-plus me-2"></i>Reserva tu cita médica</h3>
@@ -282,7 +346,8 @@
                 <form th:action="@{/horario}" method="get" class="mt-3">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="fecha" class="form-label"><i class="far fa-calendar me-2"></i>Buscar por fecha</label>
+                            <label for="fecha" class="form-label"><i class="far fa-calendar me-2"></i>Buscar por
+                                fecha</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="far fa-calendar"></i></span>
                                 <input type="date" class="form-control" id="fecha" name="fecha"
@@ -290,11 +355,14 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="nombre" class="form-label"><i class="fas fa-user-md me-2"></i>Buscar por doctor</label>
+                            <label for="nombre" class="form-label"><i class="fas fa-user-md me-2"></i>Buscar por
+                                doctor</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user-md"></i></span>
                                 <input type="search" class="form-control" id="nombre" name="nombre"
-                                    th:value="${param.nombre}" placeholder="Nombre del doctor">
+                                    th:value="${param.nombre}" placeholder="Nombre del doctor"
+                                    pattern="[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+" title="Solo se permiten letras"
+                                    onkeypress="return /[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]/i.test(event.key)">
                             </div>
                         </div>
                     </div>
@@ -316,6 +384,8 @@
     </div>
 
     <div class="container my-4">
+
+
         <div th:if="${doctores != null}">
             <div th:each="doc : ${doctores}" class="doctor-card bg-white p-4 mb-4">
                 <div class="row">
@@ -330,11 +400,12 @@
                             <p class="text-muted small mb-0">CMP <span th:text="${doc.cmp}"></span></p>
                         </div>
                     </div>
-                    
+
                     <!-- Horarios disponibles -->
                     <div class="col-md-8">
                         <div th:each="entry : ${doc.horariosPorFecha}">
-                            <h5 class="mb-2"><i class="far fa-calendar me-2"></i><span th:text="${entry.key}"></span></h5>
+                            <h5 class="mb-2"><i class="far fa-calendar me-2"></i><span th:text="${entry.key}"></span>
+                            </h5>
                             <div class="d-flex flex-wrap gap-2 mb-3">
                                 <button type="button" class="btn btn-outline-primary time-slot" data-bs-toggle="modal"
                                     data-bs-target="#detalleModal" th:data-id="${hor.id}" th:data-doctor="${doc.nombre}"
@@ -357,14 +428,23 @@
             <div class="modal-content">
                 <!-- Encabezado del Modal -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detalleModalLabel"><i class="fas fa-calendar-check me-2"></i>Confirmar cita</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <h5 class="modal-title" id="detalleModalLabel"><i class="fas fa-calendar-check me-2"></i>Confirmar
+                        cita</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
                 </div>
 
                 <!-- Cuerpo del Modal -->
                 <div class="modal-body">
                     <div class="alert alert-info mb-4">
-                        <i class="fas fa-info-circle me-2"></i>Atención de pacientes mayores de 14 años
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Importante:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>La <strong>reserva web</strong> está disponible <u>solo para pacientes mayores de 14
+                                    años</u>.</li>
+                            <li>Si necesitas agendar para menores (ej: tu hijo) o otras edades, acude a nuestro centro
+                                para una <strong>reserva presencial</strong>.</li>
+                        </ul>
                     </div>
 
                     <div class="text-center mb-4">
@@ -477,4 +557,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Acceso - Policlínico</title>
@@ -13,7 +14,7 @@
             --accent-color: #ff7e5f;
             --light-bg: #f8fafc;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light-bg);
@@ -22,23 +23,23 @@
             flex-direction: column;
             min-height: 100vh;
         }
-        
+
         .navbar {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .navbar-brand {
             font-weight: 700;
             color: var(--primary-color);
             display: flex;
             align-items: center;
         }
-        
+
         .navbar-brand img {
             margin-right: 10px;
         }
-        
+
         .auth-container {
             max-width: 500px;
             margin: 2rem auto;
@@ -48,42 +49,42 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
         }
-        
+
         .auth-container:hover {
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
-        
+
         .auth-header {
             text-align: center;
             margin-bottom: 2rem;
         }
-        
+
         .auth-header h3 {
             color: var(--primary-color);
             font-weight: 600;
         }
-        
+
         .form-control {
             padding: 12px 15px;
             border-radius: 8px;
             border: 1px solid #ced4da;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        
+
         .form-control:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(42, 127, 141, 0.25);
         }
-        
+
         .input-group-text {
             background-color: #f8f9fa;
             border-right: none;
         }
-        
+
         .input-group .form-control {
             border-left: none;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
@@ -93,81 +94,88 @@
             transition: all 0.3s;
             border-radius: 8px;
         }
-        
+
         .btn-primary:hover {
             background-color: #1a616d;
             transform: translateY(-2px);
         }
-        
+
         .btn-success {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
         }
-        
+
         .btn-success:hover {
             background-color: #3d8b40;
         }
-        
+
         .auth-footer {
             text-align: center;
             margin-top: 1.5rem;
         }
-        
+
         .auth-footer a {
             color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
         }
-        
+
         .auth-footer a:hover {
             color: #1a616d;
             text-decoration: underline;
         }
-        
+
         .toast-container {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 9999;
         }
-        
+
         .toast {
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
-        
+
         .toast-error {
             background-color: #dc3545;
             color: white;
         }
-        
+
         .form-label {
             font-weight: 500;
             color: var(--primary-color);
             margin-bottom: 8px;
         }
-        
+
         .form-select {
             padding: 12px 15px;
             border-radius: 8px;
         }
-        
+
         @media (max-width: 576px) {
             .auth-container {
                 margin: 1rem;
                 padding: 1.5rem;
             }
         }
+
+        #feedbackContraseña {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light px-4">
             <div class="container-fluid">
                 <a class="navbar-brand" th:href="@{/index}">
-                    <img src="logo.png" alt="Logo" width="35" height="35" class="d-inline-block align-text-top" />
+                    <img th:src="@{/image/LogoEmpresa.png}" alt="Logo" width="35" height="35"
+                        class="d-inline-block align-text-top" />
                     Policlínico Salud Integral
                 </a>
             </div>
@@ -176,35 +184,45 @@
 
     <main class="flex-grow-1">
         <div class="auth-container">
+            <!-- Mensajes de error (arriba del formulario) -->
+
             <!-- Login Form -->
             <form id="loginForm" style="display: block" th:action="@{/procesarLogin}" method="post">
+                <div th:if="${param.error}" class="alert alert-danger d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <div th:text="${session.errorMessage} ?: 'Credenciales inválidas.'"></div>
+                </div>
                 <div class="auth-header">
                     <h3><i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión</h3>
                     <p class="text-muted">Ingresa tus credenciales para acceder</p>
                 </div>
-                
+
                 <div class="mb-4">
                     <label for="dniLogin" class="form-label">DNI</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                        <input type="text" class="form-control" id="dniLogin" name="username" placeholder="Ingresa tu DNI" required />
+                        <input type="text" class="form-control" id="dniLogin" name="username"
+                            placeholder="Ingresa tu DNI" pattern="[0-9]{8}"
+                            title="El DNI debe contener exactamente 8 dígitos numéricos" maxlength="8"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     <label for="passwordLogin" class="form-label">Contraseña</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" id="passwordLogin" name="password" placeholder="Ingresa tu contraseña" required />
+                        <input type="password" class="form-control" id="passwordLogin" name="password"
+                            placeholder="Ingresa tu contraseña" required />
                     </div>
                 </div>
-                
+
                 <div class="d-grid mb-4">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
                     </button>
                 </div>
-                
+
                 <div class="auth-footer d-flex justify-content-between">
                     <a th:href="@{/index}"><i class="fas fa-arrow-left me-1"></i>Volver</a>
                     <a href="#" onclick="event.preventDefault(); mostrarRegistro();">
@@ -219,19 +237,21 @@
                     <h3><i class="fas fa-user-plus me-2"></i>Registro</h3>
                     <p class="text-muted">Completa tus datos para registrarte</p>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="dniReg" class="form-label">DNI</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                            <input type="text" class="form-control" id="dniReg" name="dni" placeholder="Ingresa tu DNI" required />
+                            <input type="text" class="form-control" id="dniReg" name="dni" placeholder="Ingresa tu DNI"
+                                pattern="[0-9]{8}" title="El DNI debe contener exactamente 8 dígitos numéricos"
+                                maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
                         </div>
                         <div id="dniErrorToast" class="text-danger small mt-1" style="display: none">
                             <i class="fas fa-exclamation-circle me-1"></i>El DNI ya está registrado
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
                         <label for="fechaNac" class="form-label">Fecha de Nacimiento</label>
                         <div class="input-group">
@@ -240,24 +260,33 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required />
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre"
+                            pattern="[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+"
+                            title="Solo se permiten letras (no se aceptan números ni símbolos)"
+                            oninput="this.value = this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]/g, '')" required />
                     </div>
-                    
+
                     <div class="col-md-4 mb-3">
                         <label for="apPaterno" class="form-label">Apellido Paterno</label>
-                        <input type="text" class="form-control" id="apPaterno" name="apellidoPaterno" placeholder="Apellido paterno" required />
+                        <input type="text" class="form-control" id="apPaterno" name="apellidoPaterno"
+                            placeholder="Apellido paterno" pattern="[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+"
+                            title="Solo se permiten letras (no se aceptan números ni símbolos)"
+                            oninput="this.value = this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]/g, '')" required />
                     </div>
-                    
+
                     <div class="col-md-4 mb-3">
                         <label for="apMaterno" class="form-label">Apellido Materno</label>
-                        <input type="text" class="form-control" id="apMaterno" name="apellidoMaterno" placeholder="Apellido materno" required />
+                        <input type="text" class="form-control" id="apMaterno" name="apellidoMaterno"
+                            placeholder="Apellido materno" pattern="[A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]+"
+                            title="Solo se permiten letras (no se aceptan números ni símbolos)"
+                            oninput="this.value = this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑüÜ\s]/g, '')" required />
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="sexo" class="form-label">Sexo</label>
@@ -267,48 +296,58 @@
                             <option value="F">Femenino</option>
                         </select>
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
                         <label for="celular" class="form-label">Celular</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
-                            <input type="text" class="form-control" id="celular" name="celular" placeholder="Número de celular" required />
+                            <input type="text" class="form-control" id="celular" name="celular"
+                                placeholder="Número de celular" pattern="[0-9]{9}"
+                                title="El número de celular debe tener exactamente 9 dígitos" maxlength="9"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="correo" class="form-label">Correo Electrónico</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="email" class="form-control" id="correo" name="correo" placeholder="correo@ejemplo.com" required />
+                        <input type="email" class="form-control" id="correo" name="correo"
+                            placeholder="correo@ejemplo.com" required />
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="passwordReg" class="form-label">Contraseña</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="passwordReg" name="contraseña" placeholder="Crea una contraseña" required />
+                            <input type="password" class="form-control" id="passwordReg" name="contraseña"
+                                placeholder="Crea una contraseña"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$"
+                                title="La contraseña debe tener: 8-20 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 símbolo (@$!%*?&)"
+                                required oninput="validarFortalezaContraseña(this.value)" />
+                            <div id="feedbackContraseña" class="form-text"></div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
                         <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="confirmPassword" placeholder="Repite tu contraseña" required />
+                            <input type="password" class="form-control" id="confirmPassword"
+                                placeholder="Repite tu contraseña" required />
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="d-grid mb-4">
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-user-plus me-2"></i>Registrarse
                     </button>
                 </div>
-                
+
                 <div class="auth-footer text-center">
                     <a href="#" onclick="event.preventDefault(); mostrarLogin();">
                         <i class="fas fa-sign-in-alt me-1"></i>¿Ya tienes cuenta? Inicia Sesión
@@ -320,12 +359,14 @@
 
     <!-- Toast container -->
     <div class="toast-container">
-        <div id="registroToast" class="toast toast-error align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="registroToast" class="toast toast-error align-items-center" role="alert" aria-live="assertive"
+            aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body" id="mensajeToast">
                     <i class="fas fa-exclamation-circle me-2"></i>¡Error en el registro!
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Cerrar"></button>
             </div>
         </div>
     </div>
@@ -341,7 +382,7 @@
             document.getElementById("registroForm").style.display = "none";
         }
     </script>
-    
+
     <script>
         document.getElementById("registroForm").addEventListener("submit", function (event) {
             event.preventDefault(); // Prevenir envío por defecto
@@ -395,7 +436,7 @@
             return edad;
         }
     </script>
-    
+
     <script>
         function mostrarToast(mensaje) {
             const toastElement = document.getElementById("registroToast");
@@ -411,7 +452,7 @@
             toast.show();
         }
     </script>
-    
+
     <script>
         const dniInput = document.getElementById("dniReg");
         const dniError = document.getElementById("dniErrorToast");
@@ -435,6 +476,39 @@
         });
     </script>
 
+    <script>
+        function validarFortalezaContraseña(contraseña) {
+            const feedback = document.getElementById("feedbackContraseña");
+            const regexMayuscula = /[A-Z]/;
+            const regexMinuscula = /[a-z]/;
+            const regexNumero = /\d/;
+            const regexSimbolo = /[@$!%*?&]/;
+
+            let mensaje = "";
+            let color = "red";
+
+            if (contraseña.length < 8) {
+                mensaje = "❌ Muy corta (mínimo 8 caracteres)";
+            } else if (contraseña.length > 20) {
+                mensaje = "❌ Máximo 20 caracteres";
+            } else if (!regexMayuscula.test(contraseña)) {
+                mensaje = "❌ Falta 1 mayúscula (A-Z)";
+            } else if (!regexMinuscula.test(contraseña)) {
+                mensaje = "❌ Falta 1 minúscula (a-z)";
+            } else if (!regexNumero.test(contraseña)) {
+                mensaje = "❌ Falta 1 número (0-9)";
+            } else if (!regexSimbolo.test(contraseña)) {
+                mensaje = "❌ Falta 1 símbolo (@$!%*?&)";
+            } else {
+                mensaje = "✅ Contraseña segura";
+                color = "green";
+            }
+
+            feedback.textContent = mensaje;
+            feedback.style.color = color;
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
