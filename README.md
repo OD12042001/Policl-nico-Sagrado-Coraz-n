@@ -259,3 +259,104 @@ git pull origin main
 * Crea ramas por cada tarea.
 * Atiende los comentarios en los PR.
 * No subas archivos innecesarios (por ejemplo: .class, .log, target/, etc.).
+
+DATA BASE
+create database policlinicosagrado;
+USE policlinicosagrado;
+-- Tabla de usuarios para login general
+CREATE TABLE usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dni VARCHAR(20) NOT NULL UNIQUE,
+    contraseña VARCHAR(255) NOT NULL,
+    rol ENUM('PACIENTE', 'RECEPCIONISTA', 'ADMINISTRADOR') NOT NULL
+);
+
+-- Tabla de pacientes
+CREATE TABLE paciente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    nombre VARCHAR(100),
+    apellido_paterno VARCHAR(100),
+    apellido_materno VARCHAR(100),
+    dni VARCHAR(20) UNIQUE,
+    fecha_nacimiento DATE,
+    sexo CHAR(1),
+    correo VARCHAR(100),
+    celular VARCHAR(20),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
+
+-- Tabla de recepcionistas
+CREATE TABLE recepcionista (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    nombre VARCHAR(100),
+    apellido_paterno VARCHAR(100),
+    apellido_materno VARCHAR(100),
+    dni VARCHAR(20) UNIQUE,
+    fecha_nacimiento DATE,
+    sexo CHAR(1),
+    correo VARCHAR(100),
+    celular VARCHAR(20),
+    estado ENUM('ACTIVO', 'INACTIVO') DEFAULT 'ACTIVO',
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
+
+-- Tabla de administradores
+CREATE TABLE administrador (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    dni VARCHAR(20) UNIQUE,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
+
+-- Tabla de especialidades
+CREATE TABLE especialidad (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) UNIQUE,
+    precio DECIMAL(8,2) NOT NULL DEFAULT 0.00
+);
+
+-- Tabla de doctores
+CREATE TABLE doctor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    especialidad_id INT NOT NULL,
+    cmp VARCHAR(20),
+    imagen VARCHAR(255) DEFAULT '1.png',
+    estado ENUM('ACTIVO', 'INACTIVO') DEFAULT 'ACTIVO',
+    FOREIGN KEY (especialidad_id) REFERENCES especialidad(id)
+);
+
+-- Tabla de horarios
+CREATE TABLE horario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    disponible ENUM('SI', 'NO') DEFAULT 'SI',
+    estado ENUM('UTILIZADO', 'NOUTILIZADO') DEFAULT 'NOUTILIZADO',
+    FOREIGN KEY (doctor_id) REFERENCES doctor(id)
+);
+
+-- Tabla de pagos
+CREATE TABLE pago (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    metodo VARCHAR(50),
+    monto DECIMAL(10, 2),
+    estado ENUM('PENDIENTE', 'PAGADO') DEFAULT 'PENDIENTE'
+);
+
+-- Tabla de citas
+CREATE TABLE cita (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    horario_id INT NOT NULL,
+    pago_id INT NOT NULL,
+    estado ENUM('PROGRAMADA', 'CANCELADA', 'ATENDIDA') DEFAULT 'PROGRAMADA',
+    FOREIGN KEY (paciente_id) REFERENCES paciente(id),
+    FOREIGN KEY (horario_id) REFERENCES horario(id),
+    FOREIGN KEY (pago_id) REFERENCES pago(id)
+);

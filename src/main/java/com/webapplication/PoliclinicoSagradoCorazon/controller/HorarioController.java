@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.webapplication.PoliclinicoSagradoCorazon.dao.EspecialidadDAO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.DoctorHorarioDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.HorarioDTO;
@@ -26,6 +24,7 @@ import com.webapplication.PoliclinicoSagradoCorazon.dto.Notificacion;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.PacienteDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.dto.RecepcionistaDTO;
 import com.webapplication.PoliclinicoSagradoCorazon.model.Horario;
+import com.webapplication.PoliclinicoSagradoCorazon.repository.EspecialidadConsultaRepository;
 import com.webapplication.PoliclinicoSagradoCorazon.service.CitaService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.DoctorService;
 import com.webapplication.PoliclinicoSagradoCorazon.service.HorarioService;
@@ -42,7 +41,7 @@ public class HorarioController {
     private DoctorService doctorService;
 
     @Autowired
-    private EspecialidadDAO especialidadDAO;
+    private EspecialidadConsultaRepository especialidadDAO;
 
     @Autowired
     private CitaService citaService;
@@ -102,6 +101,7 @@ public class HorarioController {
         return "redirect:/registro-cita";
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/registro-cita")
     public String mostrarFormularioCita(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         HorarioSeleccionadoDTO horario = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");

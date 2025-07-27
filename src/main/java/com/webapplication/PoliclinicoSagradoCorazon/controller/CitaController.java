@@ -81,6 +81,7 @@ public class CitaController {
         return "redirect:/registro-dni"; // redirige a la ruta /pago
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/registro-dni")
     public String mostrarFormularioCita(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         HorarioSeleccionadoDTO horario = (HorarioSeleccionadoDTO) session.getAttribute("horarioSeleccionado");
